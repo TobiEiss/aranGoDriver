@@ -28,5 +28,7 @@ func TestMain(t *testing.T) {
 	}
 
 	session.Connect("root", "ILoBhREd36LB8USwpcHcCz4hLjj8k")
+	t.Log(session.ListDBs())
 	session.CreateDB("testDB")
+	t.Log(session.ListDBs())
 }

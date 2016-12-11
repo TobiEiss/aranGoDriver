@@ -38,6 +38,20 @@ func (session *AranGoSession) Connect(username string, password string) {
 	fmt.Println(session.jwtString)
 }
 
+func (session *AranGoSession) ListDBs() []string {
+	resp := get(session, urlDatabase)
+	result := resp["result"].([]interface{})
+
+	dblist := make([]string, len(result))
+	for _, value := range result {
+		if str, ok := value.(string); ok {
+			dblist = append(dblist, str)
+		}
+	}
+
+	return dblist
+}
+
 // CreateDB creates a new db
 func (session *AranGoSession) CreateDB(dbname string) {
 	body := make(map[string]string)
@@ -45,6 +59,32 @@ func (session *AranGoSession) CreateDB(dbname string) {
 
 	resp := post(session, urlDatabase, body)
 	fmt.Println(resp)
+}
+
+func get(session *AranGoSession, url string) map[string]interface{} {
+	url = session.urlRoot + url
+	fmt.Println("URL:>", url)
+
+	// build request
+	req, err := http.NewRequest("GET", url, nil)
+	// use JWT-token if set
+	if &session.jwtString != nil {
+		req.Header.Set("Authorization", "Bearer "+session.jwtString)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	fmt.Println(req)
+
+	failOnError(err, "Cant do post-request to "+url)
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	// unmarshal to map
+	var responseMap map[string]interface{}
+	err = json.Unmarshal(body, &responseMap)
+	return responseMap
 }
 
 func post(session *AranGoSession, url string, object interface{}) map[string]interface{} {
@@ -60,7 +100,7 @@ func post(session *AranGoSession, url string, object interface{}) map[string]int
 	var jsonString = []byte(jsonBody)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonString))
 	req.Header.Set("Content-Type", "application/json")
-	// use JWT-token if os set
+	// use JWT-token if set
 	if &session.jwtString != nil {
 		req.Header.Set("Authorization", "Bearer "+session.jwtString)
 	}

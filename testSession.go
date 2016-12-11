@@ -17,6 +17,10 @@ func (session TestSession) Connect(username string, password string) {
 	fmt.Println("Connect to DB")
 }
 
+func (session *TestSession) ListDBs() []string {
+	return session.database
+}
+
 // CreateDB test create a db
 func (session *TestSession) CreateDB(dbname string) {
 	session.database = append(session.database, dbname)
