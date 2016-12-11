@@ -9,23 +9,23 @@ import (
 )
 
 type AranGoSession struct {
-	jwtString *string
+	urlRoot   string
+	jwtString string
 }
 
-const urlRoot = "http://arangodb:8529"
 const urlAuth = "/_open/auth"
 
-func NewAranGoDriverSession() *AranGoSession {
-	return &AranGoSession{}
+func NewAranGoDriverSession(host string) *AranGoSession {
+	return &AranGoSession{host, ""}
 }
 
 func (session AranGoSession) Connect(username string, password string) {
-	resp := post(urlAuth, "{\"username\":\""+username+"\", \"password\":\""+password+"\"}")
+	resp := post(&session, urlAuth, "{\"username\":\""+username+"\", \"password\":\""+password+"\"}")
 	fmt.Println(resp)
 }
 
-func post(url string, jsonBody string) string {
-	url = urlRoot + url
+func post(session *AranGoSession, url string, jsonBody string) string {
+	url = session.urlRoot + url
 	fmt.Println("URL:>", url)
 
 	var jsonString = []byte(jsonBody)

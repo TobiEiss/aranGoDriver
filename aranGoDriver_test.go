@@ -21,7 +21,7 @@ func TestMain(t *testing.T) {
 	// check the flag database
 	if *database {
 		t.Log("use arangoDriver")
-		session = aranGoDriver.NewAranGoDriverSession()
+		session = aranGoDriver.NewAranGoDriverSession("http://arangodb:8529")
 	} else {
 		t.Log("use testDriver")
 		session = aranGoDriver.NewTestSession()
