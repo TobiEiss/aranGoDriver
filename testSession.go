@@ -10,3 +10,7 @@ func NewTestSession() *TestSession {
 func (session TestSession) Connect(username string, password string) {
 
 }
+
+func (session TestSession) CreateDB(dbname string) {
+
+}

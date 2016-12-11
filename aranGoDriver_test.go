@@ -26,5 +26,7 @@ func TestMain(t *testing.T) {
 		t.Log("use testDriver")
 		session = aranGoDriver.NewTestSession()
 	}
+
 	session.Connect("root", "ILoBhREd36LB8USwpcHcCz4hLjj8k")
+	session.CreateDB("testDB")
 }

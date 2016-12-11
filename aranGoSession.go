@@ -19,6 +19,7 @@ type AranGoSession struct {
 }
 
 const urlAuth = "/_open/auth"
+const urlDatabase = "/_api/database"
 
 // NewAranGoDriverSession creates a new instance of a AranGoDriver-Session.
 // Need a host (e.g. "http://localhost:8529/")
@@ -27,13 +28,23 @@ func NewAranGoDriverSession(host string) *AranGoSession {
 }
 
 // Connect to arangoDB
-func (session AranGoSession) Connect(username string, password string) {
+func (session *AranGoSession) Connect(username string, password string) {
 	credentials := models.Credentials{}
 	credentials.Username = username
 	credentials.Password = password
 
-	resp := post(&session, urlAuth, credentials)
+	resp := post(session, urlAuth, credentials)
 	session.jwtString = resp["jwt"].(string)
+	fmt.Println(session.jwtString)
+}
+
+// CreateDB creates a new db
+func (session *AranGoSession) CreateDB(dbname string) {
+	body := make(map[string]string)
+	body["name"] = dbname
+
+	resp := post(session, urlDatabase, body)
+	fmt.Println(resp)
 }
 
 func post(session *AranGoSession, url string, object interface{}) map[string]interface{} {
@@ -49,9 +60,14 @@ func post(session *AranGoSession, url string, object interface{}) map[string]int
 	var jsonString = []byte(jsonBody)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonString))
 	req.Header.Set("Content-Type", "application/json")
+	// use JWT-token if os set
+	if &session.jwtString != nil {
+		req.Header.Set("Authorization", "Bearer "+session.jwtString)
+	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
+	fmt.Println(req)
 
 	failOnError(err, "Cant do post-request to "+url)
 
