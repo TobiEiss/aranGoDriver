@@ -4,7 +4,7 @@ This project is a golang-driver for [ArangoDB](https://www.arangodb.com/)
 
 Currently implemented:
 * connect to DB
-* databases: list, create, drip
+* databases: list, create, drop
 
 ## TOC
 - [Test](#test)
