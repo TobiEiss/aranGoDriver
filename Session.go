@@ -6,4 +6,5 @@ type Session interface {
 	// databases
 	ListDBs() []string
 	CreateDB(dbname string)
+	DropDB(dbname string)
 }

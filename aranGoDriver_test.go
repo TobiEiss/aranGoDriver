@@ -6,6 +6,7 @@ import (
 	"flag"
 
 	"github.com/TobiEiss/aranGoDriver"
+	"github.com/TobiEiss/aranGoDriver/sliceTricks"
 )
 
 var (
@@ -27,25 +28,29 @@ func TestMain(t *testing.T) {
 		session = aranGoDriver.NewTestSession()
 	}
 
+	// Connect
 	session.Connect("root", "ILoBhREd36LB8USwpcHcCz4hLjj8k")
+
+	// Check listDB
 	list := session.ListDBs()
-	assertTrue(!contains(list, "testDB"))
+	assertTrue(!sliceTricks.Contains(list, "testDB"))
 	t.Log(list)
+
+	// CreateDB
 	session.CreateDB("testDB")
+	list = session.ListDBs()
 	t.Log(session.ListDBs())
+	assertTrue(sliceTricks.Contains(list, "testDB"))
+
+	// DropDB
+	session.DropDB("testDB")
+	list = session.ListDBs()
+	t.Log(session.ListDBs())
+	assertTrue(!sliceTricks.Contains(list, "testDB"))
 }
 
 func assertTrue(test bool) {
 	if !test {
 		panic("Assertion failed")
 	}
-}
-
-func contains(stringList []string, searchString string) bool {
-	for _, value := range stringList {
-		if value == searchString {
-			return true
-		}
-	}
-	return false
 }
