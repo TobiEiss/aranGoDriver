@@ -55,3 +55,9 @@ Just name it!
 ```
 session.CreateDB("myNewDatabase")
 ```
+
+### Drop a database
+And now lets drop this database
+```
+session.DropDB("myNewDatabase")
+```
