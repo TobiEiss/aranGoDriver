@@ -9,6 +9,17 @@ Currently implemented:
   * create a database
   * drop a database
 
+- [Test](#test)
+    - [Test against a fake-in-memory-database:](#test-against-a-fake-in-memory-database)
+    - [Test with a real database](#test-with-a-real-database)
+        - [fit tests with a real database](#fit-tests-with-a-real-database)
+- [Usage](#usage)
+    - [Connect to your ArangoDB](#connect-to-your-arangodb)
+    - [List all database](#list-all-database)
+    - [Create a new database](#create-a-new-database)
+    - [Drop a database](#drop-a-database)
+
+
 ## Test
 
 ### Test against a fake-in-memory-database:
