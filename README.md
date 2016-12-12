@@ -9,6 +9,8 @@ Currently implemented:
   * create a database
   * drop a database
 
+
+## TOC
 - [Test](#test)
     - [Test against a fake-in-memory-database:](#test-against-a-fake-in-memory-database)
     - [Test with a real database](#test-with-a-real-database)
