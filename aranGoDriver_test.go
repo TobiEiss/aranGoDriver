@@ -9,6 +9,11 @@ import (
 	"github.com/TobiEiss/aranGoDriver/sliceTricks"
 )
 
+const testUsername string = "root"
+const testPassword string = "ILoBhREd36LB8USwpcHcCz4hLjj8k"
+const testDbName string = "testDB"
+const testDbHost string = "http://arangodb:8529"
+
 var (
 	database = flag.Bool("database", false, "run database integration test")
 )
@@ -22,31 +27,31 @@ func TestMain(t *testing.T) {
 	// check the flag database
 	if *database {
 		t.Log("use arangoDriver")
-		session = aranGoDriver.NewAranGoDriverSession("http://arangodb:8529")
+		session = aranGoDriver.NewAranGoDriverSession(testDbHost)
 	} else {
 		t.Log("use testDriver")
 		session = aranGoDriver.NewTestSession()
 	}
 
 	// Connect
-	session.Connect("root", "ILoBhREd36LB8USwpcHcCz4hLjj8k")
+	session.Connect(testUsername, testPassword)
 
 	// Check listDB
 	list := session.ListDBs()
-	assertTrue(!sliceTricks.Contains(list, "testDB"))
+	assertTrue(!sliceTricks.Contains(list, testDbName))
 	t.Log(list)
 
 	// CreateDB
-	session.CreateDB("testDB")
+	session.CreateDB(testDbName)
 	list = session.ListDBs()
 	t.Log(session.ListDBs())
-	assertTrue(sliceTricks.Contains(list, "testDB"))
+	assertTrue(sliceTricks.Contains(list, testDbName))
 
 	// DropDB
-	session.DropDB("testDB")
+	session.DropDB(testDbName)
 	list = session.ListDBs()
 	t.Log(session.ListDBs())
-	assertTrue(!sliceTricks.Contains(list, "testDB"))
+	assertTrue(!sliceTricks.Contains(list, testDbName))
 }
 
 func assertTrue(test bool) {
