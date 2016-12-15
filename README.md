@@ -27,17 +27,8 @@ go test
 
 ### Test with a real database
 ```
-go test -database
+go test -dbhost http://localhost:8529 -dbusername root -dbpassword password123
 ```
-
-#### fit tests with a real database
-
-1. Open file [aranGoDriver_test.go](https://github.com/TobiEiss/aranGoDriver/blob/master/aranGoDriver_test.go)
-2. Edit following const's:
-  * `testUsername` username for database
-  * `testPassword` password for database
-  * `testDbName` test-name for a not existing database
-  * `testDbHost` the host of your database (e.g.: `http://localhost:8529`)
 
 ## Usage
 
