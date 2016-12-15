@@ -27,7 +27,7 @@ func (connection *AranGoConnection) SetJwtKey(jwtString string) {
 }
 
 // Get creates a GET-Request
-func (connection *AranGoConnection) Get(url string) map[string]interface{} {
+func (connection *AranGoConnection) Get(url string) (map[string]interface{}, error) {
 	url = connection.urlRoot + url
 	fmt.Println("URL:>", url)
 
@@ -39,7 +39,7 @@ func (connection *AranGoConnection) Get(url string) map[string]interface{} {
 }
 
 // Post creates a POST-Request
-func (connection *AranGoConnection) Post(url string, object interface{}) map[string]interface{} {
+func (connection *AranGoConnection) Post(url string, object interface{}) (map[string]interface{}, error) {
 	// marshal body
 	jsonBody, err := json.Marshal(object)
 	failOnError(err, "Cant marshal object")
@@ -55,7 +55,7 @@ func (connection *AranGoConnection) Post(url string, object interface{}) map[str
 }
 
 // Delete creates a DELETE-request
-func (connection *AranGoConnection) Delete(url string) map[string]interface{} {
+func (connection *AranGoConnection) Delete(url string) (map[string]interface{}, error) {
 	// build url
 	url = connection.urlRoot + url
 	fmt.Println("URL:>", url)
@@ -67,7 +67,7 @@ func (connection *AranGoConnection) Delete(url string) map[string]interface{} {
 	return fireRequestAndUnmarshal(connection, req)
 }
 
-func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request) map[string]interface{} {
+func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request) (map[string]interface{}, error) {
 	// set headers
 	request.Header.Set("Content-Type", "application/json")
 	if &connection.jwtString != nil {
@@ -76,7 +76,9 @@ func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request
 
 	client := &http.Client{}
 	resp, err := client.Do(request)
-	failOnError(err, "Cant process request")
+	if err != nil {
+		return nil, err
+	}
 
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -85,8 +87,7 @@ func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request
 	var responseMap map[string]interface{}
 	err = json.Unmarshal(body, &responseMap)
 
-	failOnError(err, "failed while fire request and unmarshal")
-	return responseMap
+	return responseMap, err
 }
 
 func failOnError(err error, msg string) {

@@ -36,20 +36,25 @@ func TestMain(t *testing.T) {
 	// Connect
 	session.Connect(testUsername, testPassword)
 
+	// DropDB
+	err := session.DropDB(testDbName)
+	t.Log(err)
+
 	// Check listDB
-	list := session.ListDBs()
+	list, err := session.ListDBs()
+	t.Log(err)
 	assertTrue(!sliceTricks.Contains(list, testDbName))
 	t.Log(list)
 
 	// CreateDB
-	session.CreateDB(testDbName)
-	list = session.ListDBs()
+	err = session.CreateDB(testDbName)
+	list, err = session.ListDBs()
 	t.Log(session.ListDBs())
 	assertTrue(sliceTricks.Contains(list, testDbName))
 
 	// DropDB
-	session.DropDB(testDbName)
-	list = session.ListDBs()
+	err = session.DropDB(testDbName)
+	list, err = session.ListDBs()
 	t.Log(session.ListDBs())
 	assertTrue(!sliceTricks.Contains(list, testDbName))
 }

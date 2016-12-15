@@ -22,18 +22,19 @@ func NewAranGoDriverSession(host string) *AranGoSession {
 }
 
 // Connect to arangoDB
-func (session *AranGoSession) Connect(username string, password string) {
+func (session *AranGoSession) Connect(username string, password string) error {
 	credentials := models.Credentials{}
 	credentials.Username = username
 	credentials.Password = password
 
-	resp := session.arangoCon.Post(urlAuth, credentials)
+	resp, err := session.arangoCon.Post(urlAuth, credentials)
 	session.arangoCon.SetJwtKey(resp["jwt"].(string))
+	return err
 }
 
 // ListDBs lists all db's
-func (session *AranGoSession) ListDBs() []string {
-	resp := session.arangoCon.Get(urlDatabase)
+func (session *AranGoSession) ListDBs() ([]string, error) {
+	resp, err := session.arangoCon.Get(urlDatabase)
 	result := resp["result"].([]interface{})
 
 	dblist := make([]string, len(result))
@@ -43,20 +44,22 @@ func (session *AranGoSession) ListDBs() []string {
 		}
 	}
 
-	return dblist
+	return dblist, err
 }
 
 // CreateDB creates a new db
-func (session *AranGoSession) CreateDB(dbname string) {
+func (session *AranGoSession) CreateDB(dbname string) error {
 	body := make(map[string]string)
 	body["name"] = dbname
 
-	session.arangoCon.Post(urlDatabase, body)
+	_, err := session.arangoCon.Post(urlDatabase, body)
+	return err
 }
 
 // DropDB drop a database
-func (session *AranGoSession) DropDB(dbname string) {
-	session.arangoCon.Delete(urlDatabase + "/" + dbname)
+func (session *AranGoSession) DropDB(dbname string) error {
+	_, err := session.arangoCon.Delete(urlDatabase + "/" + dbname)
+	return err
 }
 
 func failOnError(err error, msg string) {
