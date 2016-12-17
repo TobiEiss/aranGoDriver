@@ -7,4 +7,6 @@ type Session interface {
 	ListDBs() ([]string, error)
 	CreateDB(dbname string) error
 	DropDB(dbname string) error
+	CreateCollection(dbname string, collectionName string) error
+	DropCollection(dbname string, collectionName string) error
 }

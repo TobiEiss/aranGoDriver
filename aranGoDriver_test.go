@@ -14,6 +14,7 @@ var (
 	testUsername = flag.String("dbusername", "testUser", "username of test-user")
 	testPassword = flag.String("dbpassword", "password123", "password for test-user")
 	testDbName   = flag.String("dbtestdbname", "testDB", "database name of test-database")
+	testCollName = flag.String("dbtestcollname", "testColl", "collection name of test-collection")
 )
 
 func TestMain(t *testing.T) {
@@ -49,6 +50,25 @@ func TestMain(t *testing.T) {
 	list, err = session.ListDBs()
 	t.Log(session.ListDBs())
 	assertTrue(sliceTricks.Contains(list, *testDbName))
+
+	// DropDB
+	err = session.DropDB(*testDbName)
+	list, err = session.ListDBs()
+	t.Log(session.ListDBs())
+	assertTrue(!sliceTricks.Contains(list, *testDbName))
+
+	// CreateDB
+	err = session.CreateDB(*testDbName)
+	list, err = session.ListDBs()
+	t.Log(session.ListDBs())
+	assertTrue(sliceTricks.Contains(list, *testDbName))
+
+	// Create collection
+	err = session.CreateCollection(*testDbName, *testCollName)
+
+	// Drop collection
+	err = session.DropCollection(*testDbName, *testCollName)
+	t.Log(err)
 
 	// DropDB
 	err = session.DropDB(*testDbName)

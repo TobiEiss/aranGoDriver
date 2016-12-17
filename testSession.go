@@ -4,16 +4,14 @@ import (
 	"fmt"
 
 	"errors"
-
-	"github.com/TobiEiss/aranGoDriver/sliceTricks"
 )
 
 type TestSession struct {
-	database []string
+	database map[string][]string
 }
 
 func NewTestSession() *TestSession {
-	return &TestSession{}
+	return &TestSession{make(map[string][]string)}
 }
 
 // Connect test
@@ -23,25 +21,44 @@ func (session TestSession) Connect(username string, password string) error {
 }
 
 func (session *TestSession) ListDBs() ([]string, error) {
-	return session.database, nil
+	databases := []string{}
+
+	for key := range session.database {
+		databases = append(databases, key)
+	}
+
+	return databases, nil
 }
 
 // CreateDB test create a db
 func (session *TestSession) CreateDB(dbname string) error {
-	if sliceTricks.Contains(session.database, dbname) {
-		return errors.New("")
+	_, ok := session.database[dbname]
+	if ok {
+		return errors.New("DB already exists")
 	}
-	session.database = append(session.database, dbname)
+	session.database[dbname] = []string{}
 	return nil
 }
 
 func (session *TestSession) DropDB(dbname string) error {
-	index := sliceTricks.Find(session.database, func(index int, value string) bool {
-		return value == dbname
-	})
-	if index < 0 {
-		return errors.New("")
+	delete(session.database, dbname)
+	return nil
+}
+
+func (session *TestSession) CreateCollection(dbname string, collectionName string) error {
+	_, ok := session.database[dbname]
+	if !ok {
+		return errors.New("DB doesnt")
 	}
-	session.database = append(session.database[:index], session.database[index+1:]...)
+	session.database[dbname] = append(session.database[dbname], collectionName)
+	return nil
+}
+
+func (session *TestSession) DropCollection(dbname string, collectionName string) error {
+	_, ok := session.database[dbname]
+	if !ok {
+		return errors.New("DB doesnt")
+	}
+	session.database[dbname] = append(session.database[dbname], collectionName)
 	return nil
 }

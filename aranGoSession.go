@@ -14,6 +14,7 @@ type AranGoSession struct {
 
 const urlAuth = "/_open/auth"
 const urlDatabase = "/_api/database"
+const urlCollection = "/_api/collection"
 
 // NewAranGoDriverSession creates a new instance of a AranGoDriver-Session.
 // Need a host (e.g. "http://localhost:8529/")
@@ -59,6 +60,20 @@ func (session *AranGoSession) CreateDB(dbname string) error {
 // DropDB drop a database
 func (session *AranGoSession) DropDB(dbname string) error {
 	_, err := session.arangoCon.Delete(urlDatabase + "/" + dbname)
+	return err
+}
+
+// CreateCollection creates a collection
+func (session *AranGoSession) CreateCollection(dbname string, collectionName string) error {
+	body := make(map[string]string)
+	body["name"] = collectionName
+	_, err := session.arangoCon.Post("/_db/"+dbname+urlCollection, body)
+	return err
+}
+
+// DropCollection deletes a collection
+func (session *AranGoSession) DropCollection(dbname string, collectionName string) error {
+	_, err := session.arangoCon.Delete("/_db/" + dbname + urlCollection + "/" + collectionName)
 	return err
 }
 
