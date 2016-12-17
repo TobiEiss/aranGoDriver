@@ -3,7 +3,6 @@ package aranGoConnection
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -29,7 +28,7 @@ func (connection *AranGoConnection) SetJwtKey(jwtString string) {
 // Get creates a GET-Request
 func (connection *AranGoConnection) Get(url string) (map[string]interface{}, error) {
 	url = connection.urlRoot + url
-	fmt.Println("URL:>", url)
+	log.Println("GET:>", url)
 
 	// build request
 	req, err := http.NewRequest("GET", url, nil)
@@ -46,7 +45,7 @@ func (connection *AranGoConnection) Post(url string, object interface{}) (map[st
 
 	// build url
 	url = connection.urlRoot + url
-	fmt.Println("URL:>", url)
+	log.Println("POST:>", url)
 
 	// build request
 	var jsonString = []byte(jsonBody)
@@ -62,7 +61,7 @@ func (connection *AranGoConnection) Put(url string, object interface{}) (map[str
 
 	// build url
 	url = connection.urlRoot + url
-	fmt.Println("URL:>", url)
+	log.Println("PUT:>", url)
 
 	// build request
 	var jsonString = []byte(jsonBody)
@@ -74,7 +73,7 @@ func (connection *AranGoConnection) Put(url string, object interface{}) (map[str
 func (connection *AranGoConnection) Delete(url string) (map[string]interface{}, error) {
 	// build url
 	url = connection.urlRoot + url
-	fmt.Println("URL:>", url)
+	log.Println("DELETE:>", url)
 
 	// build request
 	req, err := http.NewRequest("DELETE", url, nil)
