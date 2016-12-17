@@ -9,4 +9,5 @@ type Session interface {
 	DropDB(dbname string) error
 	CreateCollection(dbname string, collectionName string) error
 	DropCollection(dbname string, collectionName string) error
+	TruncateCollection(dbname string, collectionName string) error
 }

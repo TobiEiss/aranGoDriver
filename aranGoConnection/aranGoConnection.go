@@ -54,6 +54,22 @@ func (connection *AranGoConnection) Post(url string, object interface{}) (map[st
 	return fireRequestAndUnmarshal(connection, req)
 }
 
+// Put creates a PUT-Request
+func (connection *AranGoConnection) Put(url string, object interface{}) (map[string]interface{}, error) {
+	// marshal body
+	jsonBody, err := json.Marshal(object)
+	failOnError(err, "Cant marshal object")
+
+	// build url
+	url = connection.urlRoot + url
+	fmt.Println("URL:>", url)
+
+	// build request
+	var jsonString = []byte(jsonBody)
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonString))
+	return fireRequestAndUnmarshal(connection, req)
+}
+
 // Delete creates a DELETE-request
 func (connection *AranGoConnection) Delete(url string) (map[string]interface{}, error) {
 	// build url

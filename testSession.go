@@ -7,11 +7,11 @@ import (
 )
 
 type TestSession struct {
-	database map[string][]string
+	database map[string]map[string][]string
 }
 
 func NewTestSession() *TestSession {
-	return &TestSession{make(map[string][]string)}
+	return &TestSession{make(map[string]map[string][]string)}
 }
 
 // Connect test
@@ -36,7 +36,7 @@ func (session *TestSession) CreateDB(dbname string) error {
 	if ok {
 		return errors.New("DB already exists")
 	}
-	session.database[dbname] = []string{}
+	session.database[dbname] = map[string][]string{}
 	return nil
 }
 
@@ -50,7 +50,7 @@ func (session *TestSession) CreateCollection(dbname string, collectionName strin
 	if !ok {
 		return errors.New("DB doesnt")
 	}
-	session.database[dbname] = append(session.database[dbname], collectionName)
+	session.database[dbname][collectionName] = append(session.database[dbname][collectionName], collectionName)
 	return nil
 }
 
@@ -59,6 +59,11 @@ func (session *TestSession) DropCollection(dbname string, collectionName string)
 	if !ok {
 		return errors.New("DB doesnt")
 	}
-	session.database[dbname] = append(session.database[dbname], collectionName)
+	delete(session.database[dbname], collectionName)
+	return nil
+}
+
+func (session *TestSession) TruncateCollection(dbname string, collectionName string) error {
+	session.database[dbname][collectionName] = []string{}
 	return nil
 }

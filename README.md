@@ -5,7 +5,7 @@ This project is a golang-driver for [ArangoDB](https://www.arangodb.com/)
 Currently implemented:
 * connect to DB
 * databases: list, create, drop
-* collections: create, drop
+* collections: create, drop, truncate
 
 ## TOC
 - [Test](#test)
@@ -13,12 +13,8 @@ Currently implemented:
     - [Test with a real database](#test-with-a-real-database)
 - [Usage](#usage)
     - [Connect to your ArangoDB](#connect-to-your-arangodb)
-    - [List all database](#list-all-database)
-    - [Create a new database](#create-a-new-database)
-    - [Drop a database](#drop-a-database)
-    - [Create a new collection](#create-a-new-collection)
-    - [Drop a collection](#drop-a-collection)
-
+    - [Database](#database)
+    - [Collection](#collection)
 
 ## Test
 
@@ -42,36 +38,29 @@ session := aranGoDriver.NewAranGoDriverSession("http://localhost:8529")
 session.Connect("username", "password")
 ```
 
-### List all database
+### Database
 You will get all databases as string-slice (`[]string`)
 ```
+// list databases
 list := session.ListDBs()
-fmt.Println(list)
-```
+fmt.Println(list) // will print: [ _system test testDB]
 
-will print:
-`[ _system test testDB]`
-
-### Create a new database
-Just name it!
-```
+// create databases
 session.CreateDB("myNewDatabase")
-```
 
-### Drop a database
-And now lets drop this database
-```
+// drop databases
 session.DropDB("myNewDatabase")
 ```
 
-### Create a new collection
+### Collection
 You need to select the database-name and choose a collection!
 ```
+// create a collection in a database
 CreateCollection("myNewDatabase", "myNewCollection")
-```
 
-### Drop a collection
-Same way like creating:
-```
+// drop collection from database
 DropCollection("myNewDatabase", "myNewCollection")
+
+// truncate database
+TruncateCollection("myNewDatabase", "myNewCollection")
 ```

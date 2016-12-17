@@ -77,6 +77,12 @@ func (session *AranGoSession) DropCollection(dbname string, collectionName strin
 	return err
 }
 
+// TruncateCollection truncate collections
+func (session *AranGoSession) TruncateCollection(dbname string, collectionName string) error {
+	_, err := session.arangoCon.Put("/_db/"+dbname+urlCollection+"/"+collectionName+"/truncate", "")
+	return err
+}
+
 func failOnError(err error, msg string) {
 	if err != nil {
 		log.Fatalf("%s: %s", msg, err)

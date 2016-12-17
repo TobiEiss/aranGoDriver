@@ -66,6 +66,9 @@ func TestMain(t *testing.T) {
 	// Create collection
 	err = session.CreateCollection(*testDbName, *testCollName)
 
+	// Truncate collection
+	err = session.TruncateCollection(*testDbName, *testCollName)
+
 	// Drop collection
 	err = session.DropCollection(*testDbName, *testCollName)
 	t.Log(err)
