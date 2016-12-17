@@ -39,11 +39,10 @@ session.Connect("username", "password")
 ```
 
 ### Database
-You will get all databases as string-slice (`[]string`)
 ```
 // list databases
 list := session.ListDBs()
-fmt.Println(list) // will print: [ _system test testDB]
+fmt.Println(list) // will print ([]string): [ _system test testDB]
 
 // create databases
 session.CreateDB("myNewDatabase")
@@ -53,7 +52,6 @@ session.DropDB("myNewDatabase")
 ```
 
 ### Collection
-You need to select the database-name and choose a collection!
 ```
 // create a collection in a database
 CreateCollection("myNewDatabase", "myNewCollection")
