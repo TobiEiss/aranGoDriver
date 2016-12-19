@@ -35,8 +35,9 @@ func TestMain(t *testing.T) {
 		testSession := aranGoDriver.NewTestSession()
 
 		// fake
-		testDoc := make(map[string]interface{})
-		testDoc["foo"] = "bar"
+		testDoc := make([]map[string]interface{}, 1)
+		testMap := make(map[string]interface{})
+		testDoc[0] = testMap
 		jsonStr, _ := json.Marshal(testDoc)
 		fake1 := aranGoDriver.AqlFake{
 			JsonResult: string(jsonStr),

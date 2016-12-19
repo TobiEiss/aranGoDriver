@@ -20,7 +20,7 @@ type TestSession struct {
 
 type AqlFake struct {
 	JsonResult string
-	MapResult  map[string]interface{}
+	MapResult  []map[string]interface{}
 }
 
 func NewTestSession() *TestSession {
@@ -105,9 +105,7 @@ func (session *TestSession) CreateDocument(dbname string, collectionName string,
 
 func (session *TestSession) AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error) {
 	aql := session.aqlFakes[query]
-	var tmpArray []map[string]interface{}
-	tmpArray = append(tmpArray, aql.MapResult)
-	return tmpArray, aql.JsonResult, nil
+	return aql.MapResult, aql.JsonResult, nil
 }
 
 func (session *TestSession) AddAqlFake(aql string, fake AqlFake) {
