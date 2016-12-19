@@ -6,8 +6,6 @@ import (
 
 	"flag"
 
-	"reflect"
-
 	"github.com/TobiEiss/aranGoDriver"
 	"github.com/TobiEiss/aranGoDriver/sliceTricks"
 )
@@ -69,8 +67,6 @@ func TestMain(t *testing.T) {
 	// Create collection
 	err = session.CreateCollection(*testDbName, *testCollName)
 
-	// session.AqlQuery
-
 	// Truncate collection
 	err = session.TruncateCollection(*testDbName, *testCollName)
 
@@ -80,18 +76,12 @@ func TestMain(t *testing.T) {
 	_, err = session.CreateDocument(*testDbName, *testCollName, testDoc)
 	failOnError(err, "create Document")
 
+	// session.AqlQuery
 	if *testDbHost != "" {
 		// AqlQuery
 		query := "FOR element in testColl FILTER element.foo == 'bar' RETURN element"
-		response, err := session.AqlQuery(*testDbName, query, true, 1)
+		result, err := session.AqlQuery(*testDbName, query, true, 1)
 		failOnError(err, "AQL-Query")
-		resultInterface := response["result"]
-		resultSlice := reflect.ValueOf(resultInterface)
-
-		result := make([]map[string]interface{}, resultSlice.Len())
-		for i := 0; i < resultSlice.Len(); i++ {
-			result[i] = resultSlice.Index(i).Interface().(map[string]interface{})
-		}
 		assertTrue(len(result) > 0)
 		t.Log(result)
 	}

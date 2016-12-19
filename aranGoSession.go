@@ -2,6 +2,7 @@ package aranGoDriver
 
 import (
 	"encoding/json"
+	"reflect"
 
 	"github.com/TobiEiss/aranGoDriver/aranGoConnection"
 	"github.com/TobiEiss/aranGoDriver/models"
@@ -94,11 +95,21 @@ func (session *AranGoSession) CreateDocument(dbname string, collectionName strin
 }
 
 // AqlQuery send a query
-func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, batchSize int) (map[string]interface{}, error) {
+func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, error) {
 	requestBody := make(map[string]interface{})
 	requestBody["query"] = query
 	requestBody["count"] = count
 	requestBody["batchSize"] = batchSize
-	_, result, err := session.arangoCon.Post("/_db/"+dbname+urlCursor, requestBody)
+	_, response, err := session.arangoCon.Post("/_db/"+dbname+urlCursor, requestBody)
+
+	// map response to array of map
+	resultInterface := response["result"]
+	resultSlice := reflect.ValueOf(resultInterface)
+
+	result := make([]map[string]interface{}, resultSlice.Len())
+	for i := 0; i < resultSlice.Len(); i++ {
+		result[i] = resultSlice.Index(i).Interface().(map[string]interface{})
+	}
+
 	return result, err
 }

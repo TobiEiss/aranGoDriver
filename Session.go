@@ -17,5 +17,5 @@ type Session interface {
 	TruncateCollection(dbname string, collectionName string) error
 
 	CreateDocument(dbname string, collectionName string, object map[string]interface{}) (models.ArangoID, error)
-	AqlQuery(dbname string, query string, count bool, batchSize int) (map[string]interface{}, error)
+	AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, error)
 }
