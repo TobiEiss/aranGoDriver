@@ -80,7 +80,7 @@ func TestMain(t *testing.T) {
 	if *testDbHost != "" {
 		// AqlQuery
 		query := "FOR element in testColl FILTER element.foo == 'bar' RETURN element"
-		result, err := session.AqlQuery(*testDbName, query, true, 1)
+		result, _, err := session.AqlQuery(*testDbName, query, true, 1)
 		failOnError(err, "AQL-Query")
 		assertTrue(len(result) > 0)
 		t.Log(result)

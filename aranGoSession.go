@@ -95,7 +95,7 @@ func (session *AranGoSession) CreateDocument(dbname string, collectionName strin
 }
 
 // AqlQuery send a query
-func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, error) {
+func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error) {
 	requestBody := make(map[string]interface{})
 	requestBody["query"] = query
 	requestBody["count"] = count
@@ -111,5 +111,8 @@ func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, 
 		result[i] = resultSlice.Index(i).Interface().(map[string]interface{})
 	}
 
-	return result, err
+	// only result as json
+	resultByte, err := json.Marshal(resultInterface)
+
+	return result, string(resultByte), err
 }
