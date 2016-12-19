@@ -96,3 +96,8 @@ func (session *TestSession) CreateDocument(dbname string, collectionName string,
 
 	return arangoID, nil
 }
+
+func (session *TestSession) AqlQuery(dbname string, query string, count bool, batchSize int) (map[string]interface{}, error) {
+	// TODO
+	return nil, nil
+}

@@ -7,6 +7,7 @@ Currently implemented:
 * databases: list, create, drop
 * collections: create, drop, truncate
 * documents: create
+* AQL: simple cursor
 
 ## TOC
 - [Test](#test)
@@ -17,6 +18,7 @@ Currently implemented:
     - [Database](#database)
     - [Collection](#collection)
     - [Document](#document)
+    - [AQL](#aql)
 
 ## Test
 
@@ -70,4 +72,11 @@ err = TruncateCollection("myNewDatabase", "myNewCollection")
 // create document
 testDoc["foo"] = "bar"
 arangoID, err := session.CreateDocument("myNewDatabase", "myNewCollection", testDoc)
+```
+
+### aql
+```
+// create query
+query := "FOR element in testColl FILTER element.foo == 'bar' RETURN element"
+response, err := session.AqlQuery("myNewDatabase", query, true, 1)
 ```

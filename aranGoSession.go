@@ -16,6 +16,7 @@ const urlAuth = "/_open/auth"
 const urlDatabase = "/_api/database"
 const urlCollection = "/_api/collection"
 const urlDocument = "/_api/document"
+const urlCursor = "/_api/cursor"
 
 // NewAranGoDriverSession creates a new instance of a AranGoDriver-Session.
 // Need a host (e.g. "http://localhost:8529/")
@@ -90,4 +91,14 @@ func (session *AranGoSession) CreateDocument(dbname string, collectionName strin
 	aranggoID := models.ArangoID{}
 	err = json.Unmarshal([]byte(bodyString), &aranggoID)
 	return aranggoID, err
+}
+
+// AqlQuery send a query
+func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, batchSize int) (map[string]interface{}, error) {
+	requestBody := make(map[string]interface{})
+	requestBody["query"] = query
+	requestBody["count"] = count
+	requestBody["batchSize"] = batchSize
+	_, result, err := session.arangoCon.Post("/_db/"+dbname+urlCursor, requestBody)
+	return result, err
 }
