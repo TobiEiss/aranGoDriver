@@ -1,6 +1,7 @@
 package aranGoDriver_test
 
 import (
+	"log"
 	"testing"
 
 	"flag"
@@ -69,6 +70,12 @@ func TestMain(t *testing.T) {
 	// Truncate collection
 	err = session.TruncateCollection(*testDbName, *testCollName)
 
+	testDoc := make(map[string]interface{})
+	testDoc["foo"] = "bar"
+	arangoID, err := session.CreateDocument(*testDbName, *testCollName, testDoc)
+	failOnError(err, "create Document")
+	t.Log(arangoID)
+
 	// Drop collection
 	err = session.DropCollection(*testDbName, *testCollName)
 	t.Log(err)
@@ -83,5 +90,11 @@ func TestMain(t *testing.T) {
 func assertTrue(test bool) {
 	if !test {
 		panic("Assertion failed")
+	}
+}
+
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
 	}
 }

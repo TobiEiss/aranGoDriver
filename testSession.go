@@ -2,16 +2,24 @@ package aranGoDriver
 
 import (
 	"fmt"
+	"strconv"
+	"time"
+
+	"github.com/TobiEiss/aranGoDriver/models"
 
 	"errors"
+	"math/rand"
+
+	"github.com/fatih/structs"
 )
 
 type TestSession struct {
-	database map[string]map[string][]string
+	database map[string]map[string][]map[string]interface{}
 }
 
 func NewTestSession() *TestSession {
-	return &TestSession{make(map[string]map[string][]string)}
+	// database - collection - list of document (key, value)
+	return &TestSession{make(map[string]map[string][]map[string]interface{})}
 }
 
 // Connect test
@@ -36,7 +44,7 @@ func (session *TestSession) CreateDB(dbname string) error {
 	if ok {
 		return errors.New("DB already exists")
 	}
-	session.database[dbname] = map[string][]string{}
+	session.database[dbname] = make(map[string][]map[string]interface{})
 	return nil
 }
 
@@ -50,7 +58,8 @@ func (session *TestSession) CreateCollection(dbname string, collectionName strin
 	if !ok {
 		return errors.New("DB doesnt")
 	}
-	session.database[dbname][collectionName] = append(session.database[dbname][collectionName], collectionName)
+
+	session.database[dbname][collectionName] = make([]map[string]interface{}, 10)
 	return nil
 }
 
@@ -64,6 +73,26 @@ func (session *TestSession) DropCollection(dbname string, collectionName string)
 }
 
 func (session *TestSession) TruncateCollection(dbname string, collectionName string) error {
-	session.database[dbname][collectionName] = []string{}
+	session.database[dbname][collectionName] = make([]map[string]interface{}, 10)
 	return nil
+}
+
+func (session *TestSession) CreateDocument(dbname string, collectionName string, object map[string]interface{}) (models.ArangoID, error) {
+	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
+	arangoID := models.ArangoID{
+		ID:  timestamp,
+		Key: strconv.FormatInt(rand.Int63(), 10),
+		Rev: "",
+	}
+
+	// create entry
+	entry := structs.Map(arangoID)
+	for key, value := range object {
+		entry[key] = value
+	}
+
+	// "persist"
+	session.database[dbname][collectionName] = append(session.database[dbname][collectionName], entry)
+
+	return arangoID, nil
 }

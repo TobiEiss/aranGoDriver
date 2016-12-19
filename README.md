@@ -6,6 +6,7 @@ Currently implemented:
 * connect to DB
 * databases: list, create, drop
 * collections: create, drop, truncate
+* documents: create
 
 ## TOC
 - [Test](#test)
@@ -15,6 +16,7 @@ Currently implemented:
     - [Connect to your ArangoDB](#connect-to-your-arangodb)
     - [Database](#database)
     - [Collection](#collection)
+    - [Document](#document)
 
 ## Test
 
@@ -45,20 +47,27 @@ list := session.ListDBs()
 fmt.Println(list) // will print ([]string): [ _system test testDB]
 
 // create databases
-session.CreateDB("myNewDatabase")
+err := session.CreateDB("myNewDatabase")
 
 // drop databases
-session.DropDB("myNewDatabase")
+err = session.DropDB("myNewDatabase")
 ```
 
 ### Collection
 ```
 // create a collection in a database
-CreateCollection("myNewDatabase", "myNewCollection")
+err = CreateCollection("myNewDatabase", "myNewCollection")
 
 // drop collection from database
-DropCollection("myNewDatabase", "myNewCollection")
+err = DropCollection("myNewDatabase", "myNewCollection")
 
 // truncate database
-TruncateCollection("myNewDatabase", "myNewCollection")
+err = TruncateCollection("myNewDatabase", "myNewCollection")
+```
+
+### Document
+```
+// create document
+testDoc["foo"] = "bar"
+arangoID, err := session.CreateDocument("myNewDatabase", "myNewCollection", testDoc)
 ```

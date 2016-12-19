@@ -26,7 +26,7 @@ func (connection *AranGoConnection) SetJwtKey(jwtString string) {
 }
 
 // Get creates a GET-Request
-func (connection *AranGoConnection) Get(url string) (map[string]interface{}, error) {
+func (connection *AranGoConnection) Get(url string) (string, map[string]interface{}, error) {
 	url = connection.urlRoot + url
 	log.Println("GET:>", url)
 
@@ -38,7 +38,7 @@ func (connection *AranGoConnection) Get(url string) (map[string]interface{}, err
 }
 
 // Post creates a POST-Request
-func (connection *AranGoConnection) Post(url string, object interface{}) (map[string]interface{}, error) {
+func (connection *AranGoConnection) Post(url string, object interface{}) (string, map[string]interface{}, error) {
 	// marshal body
 	jsonBody, err := json.Marshal(object)
 	failOnError(err, "Cant marshal object")
@@ -54,7 +54,7 @@ func (connection *AranGoConnection) Post(url string, object interface{}) (map[st
 }
 
 // Put creates a PUT-Request
-func (connection *AranGoConnection) Put(url string, object interface{}) (map[string]interface{}, error) {
+func (connection *AranGoConnection) Put(url string, object interface{}) (string, map[string]interface{}, error) {
 	// marshal body
 	jsonBody, err := json.Marshal(object)
 	failOnError(err, "Cant marshal object")
@@ -70,7 +70,7 @@ func (connection *AranGoConnection) Put(url string, object interface{}) (map[str
 }
 
 // Delete creates a DELETE-request
-func (connection *AranGoConnection) Delete(url string) (map[string]interface{}, error) {
+func (connection *AranGoConnection) Delete(url string) (string, map[string]interface{}, error) {
 	// build url
 	url = connection.urlRoot + url
 	log.Println("DELETE:>", url)
@@ -82,7 +82,7 @@ func (connection *AranGoConnection) Delete(url string) (map[string]interface{}, 
 	return fireRequestAndUnmarshal(connection, req)
 }
 
-func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request) (map[string]interface{}, error) {
+func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request) (string, map[string]interface{}, error) {
 	// set headers
 	request.Header.Set("Content-Type", "application/json")
 	if &connection.jwtString != nil {
@@ -92,7 +92,7 @@ func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request
 	client := &http.Client{}
 	resp, err := client.Do(request)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
 	defer resp.Body.Close()
@@ -102,7 +102,7 @@ func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request
 	var responseMap map[string]interface{}
 	err = json.Unmarshal(body, &responseMap)
 
-	return responseMap, err
+	return string(body), responseMap, err
 }
 
 func failOnError(err error, msg string) {
