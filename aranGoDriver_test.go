@@ -6,6 +6,8 @@ import (
 
 	"flag"
 
+	"encoding/json"
+
 	"github.com/TobiEiss/aranGoDriver"
 	"github.com/TobiEiss/aranGoDriver/sliceTricks"
 )
@@ -30,7 +32,18 @@ func TestMain(t *testing.T) {
 		session = aranGoDriver.NewAranGoDriverSession(*testDbHost)
 	} else {
 		t.Log("use testDriver")
-		session = aranGoDriver.NewTestSession()
+		testSession := aranGoDriver.NewTestSession()
+
+		// fake
+		testDoc := make(map[string]interface{})
+		testDoc["foo"] = "bar"
+		jsonStr, _ := json.Marshal(testDoc)
+		fake1 := aranGoDriver.AqlFake{
+			JsonResult: string(jsonStr),
+			MapResult:  testDoc,
+		}
+		testSession.AddAqlFake("FOR element in testColl FILTER element.foo == 'bar' RETURN element", fake1)
+		session = testSession
 	}
 
 	// Connect
@@ -77,18 +90,15 @@ func TestMain(t *testing.T) {
 	failOnError(err, "create Document")
 
 	// session.AqlQuery
-	if *testDbHost != "" {
-		// AqlQuery
-		query := "FOR element in testColl FILTER element.foo == 'bar' RETURN element"
-		result, _, err := session.AqlQuery(*testDbName, query, true, 1)
-		failOnError(err, "AQL-Query")
-		assertTrue(len(result) > 0)
-		t.Log(result)
-	}
+	query := "FOR element in testColl FILTER element.foo == 'bar' RETURN element"
+	result, _, err := session.AqlQuery(*testDbName, query, true, 1)
+	failOnError(err, "AQL-Query")
+	assertTrue(len(result) > 0)
+	t.Log(result)
 
 	// Drop collection
 	err = session.DropCollection(*testDbName, *testCollName)
-	t.Log(err)
+	failOnError(err, "Cant drop collection")
 
 	// DropDB
 	err = session.DropDB(*testDbName)

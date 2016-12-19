@@ -15,11 +15,17 @@ import (
 
 type TestSession struct {
 	database map[string]map[string][]map[string]interface{}
+	aqlFakes map[string]AqlFake
+}
+
+type AqlFake struct {
+	JsonResult string
+	MapResult  map[string]interface{}
 }
 
 func NewTestSession() *TestSession {
 	// database - collection - list of document (key, value)
-	return &TestSession{make(map[string]map[string][]map[string]interface{})}
+	return &TestSession{make(map[string]map[string][]map[string]interface{}), make(map[string]AqlFake)}
 }
 
 // Connect test
@@ -98,6 +104,12 @@ func (session *TestSession) CreateDocument(dbname string, collectionName string,
 }
 
 func (session *TestSession) AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error) {
-	// TODO
-	return nil, "nil", nil
+	aql := session.aqlFakes[query]
+	var tmpArray []map[string]interface{}
+	tmpArray = append(tmpArray, aql.MapResult)
+	return tmpArray, aql.JsonResult, nil
+}
+
+func (session *TestSession) AddAqlFake(aql string, fake AqlFake) {
+	session.aqlFakes[aql] = fake
 }
