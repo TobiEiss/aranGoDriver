@@ -43,7 +43,7 @@ session.Connect("username", "password")
 ```
 
 ### Database
-```
+```golang
 // list databases
 list := session.ListDBs()
 fmt.Println(list) // will print ([]string): [ _system test testDB]
@@ -56,7 +56,7 @@ err = session.DropDB("myNewDatabase")
 ```
 
 ### Collection
-```
+```golang
 // create a collection in a database
 err = CreateCollection("myNewDatabase", "myNewCollection")
 
@@ -68,14 +68,14 @@ err = TruncateCollection("myNewDatabase", "myNewCollection")
 ```
 
 ### Document
-```
+```golang
 // create document
 testDoc["foo"] = "bar"
 arangoID, err := session.CreateDocument("myNewDatabase", "myNewCollection", testDoc)
 ```
 
 ### aql
-```
+```golang
 // create query
 query := "FOR element in testColl FILTER element.foo == 'bar' RETURN element"
 response, err := session.AqlQuery("myNewDatabase", query, true, 1)
