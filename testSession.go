@@ -106,8 +106,11 @@ func (session *TestSession) CreateDocument(dbname string, collectionName string,
 }
 
 func (session *TestSession) AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error) {
-	aql := session.aqlFakes[query]
-	return aql.MapResult, aql.JsonResult, nil
+	if len(session.aqlFakes) > 0 {
+		aql := session.aqlFakes[query]
+		return aql.MapResult, aql.JsonResult, nil
+	}
+	return nil, "nil", errors.New("fakes are empty")
 }
 
 func (session *TestSession) AddAqlFake(aql string, fake AqlFake) {
