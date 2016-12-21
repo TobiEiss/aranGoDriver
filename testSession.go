@@ -10,6 +10,8 @@ import (
 	"errors"
 	"math/rand"
 
+	"encoding/json"
+
 	"github.com/fatih/structs"
 )
 
@@ -110,4 +112,18 @@ func (session *TestSession) AqlQuery(dbname string, query string, count bool, ba
 
 func (session *TestSession) AddAqlFake(aql string, fake AqlFake) {
 	session.aqlFakes[aql] = fake
+}
+
+func (session *TestSession) GetCollectionByID(dbname string, id string) (string, map[string]interface{}, error) {
+	for _, collection := range session.database[dbname] {
+		for _, entry := range collection {
+			for key, value := range entry {
+				if key == "_id" && value == id {
+					jsonStr, err := json.Marshal(entry)
+					return string(jsonStr), entry, err
+				}
+			}
+		}
+	}
+	return "", nil, nil
 }

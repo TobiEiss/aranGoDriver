@@ -6,7 +6,7 @@ Currently implemented:
 * connect to DB
 * databases: list, create, drop
 * collections: create, drop, truncate
-* documents: create
+* documents: create, getById
 * AQL: simple cursor
 
 ## TOC
@@ -72,6 +72,9 @@ err = TruncateCollection("myNewDatabase", "myNewCollection")
 // create document
 testDoc["foo"] = "bar"
 arangoID, err := session.CreateDocument("myNewDatabase", "myNewCollection", testDoc)
+
+// get by id
+resultAsJsonString, resultAsMap, err := session.GetCollectionByID("myNewDatabase", idOfDocument)
 ```
 
 ### aql

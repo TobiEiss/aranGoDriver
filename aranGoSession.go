@@ -116,3 +116,8 @@ func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, 
 
 	return result, string(resultByte), err
 }
+
+// GetCollectionByID search collection by id
+func (session *AranGoSession) GetCollectionByID(dbname string, id string) (string, map[string]interface{}, error) {
+	return session.arangoCon.Get("/_db/" + dbname + urlDocument + "/" + id)
+}

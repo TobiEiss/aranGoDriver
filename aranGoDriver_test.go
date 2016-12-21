@@ -37,6 +37,8 @@ func TestMain(t *testing.T) {
 		// fake
 		testDoc := make([]map[string]interface{}, 1)
 		testMap := make(map[string]interface{})
+		testMap["foo"] = "bar"
+		testMap["_id"] = "userid"
 		testDoc[0] = testMap
 		jsonStr, _ := json.Marshal(testDoc)
 		fake1 := aranGoDriver.AqlFake{
@@ -85,17 +87,30 @@ func TestMain(t *testing.T) {
 	err = session.TruncateCollection(*testDbName, *testCollName)
 
 	// Create Document
-	testDoc := make(map[string]interface{})
-	testDoc["foo"] = "bar"
-	_, err = session.CreateDocument(*testDbName, *testCollName, testDoc)
+	testMap := make(map[string]interface{})
+	testMap["foo"] = "bar"
+	testMap["_id"] = "userid"
+	_, err = session.CreateDocument(*testDbName, *testCollName, testMap)
 	failOnError(err, "create Document")
 
 	// session.AqlQuery
 	query := "FOR element in testColl FILTER element.foo == 'bar' RETURN element"
-	result, _, err := session.AqlQuery(*testDbName, query, true, 1)
+	results, _, err := session.AqlQuery(*testDbName, query, true, 1)
 	failOnError(err, "AQL-Query")
-	assertTrue(len(result) > 0)
-	t.Log(result)
+	assertTrue(len(results) > 0)
+	t.Log(results)
+
+	// search for ID
+	id, ok := results[0]["_id"].(string)
+	if !ok {
+		t.Error("Cant find a key in result")
+	}
+	_, result, err := session.GetCollectionByID(*testDbName, id)
+	id2, ok := result["_id"].(string)
+
+	if !ok || (id != id2) {
+		t.Error("id's arent the same")
+	}
 
 	// Drop collection
 	err = session.DropCollection(*testDbName, *testCollName)
