@@ -1,4 +1,4 @@
-# aranGoDriver [!Build Status](https://travis-ci.org/TobiEiss/aranGoDriver.svg?branch=master)
+# aranGoDriver [![Build Status](https://travis-ci.org/TobiEiss/aranGoDriver.svg?branch=master)](https://travis-ci.org/TobiEiss/aranGoDriver)
 
 This project is a golang-driver for [ArangoDB](https://www.arangodb.com/)
 
