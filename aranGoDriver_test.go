@@ -89,9 +89,11 @@ func TestMain(t *testing.T) {
 	// Create Document
 	testMap := make(map[string]interface{})
 	testMap["foo"] = "bar"
-	testMap["_id"] = "userid"
+	if *testDbHost == "" {
+		testMap["_id"] = "userid"
+	}
 	_, err = session.CreateDocument(*testDbName, *testCollName, testMap)
-	failOnError(err, "create Document")
+	failOnError(err, "failed while creating Document")
 
 	// session.AqlQuery
 	query := "FOR element in testColl FILTER element.foo == 'bar' RETURN element"
