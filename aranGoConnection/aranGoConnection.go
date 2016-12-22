@@ -82,6 +82,22 @@ func (connection *AranGoConnection) Delete(url string) (string, map[string]inter
 	return fireRequestAndUnmarshal(connection, req)
 }
 
+// Patch creates a PATCH-request
+func (connection *AranGoConnection) Patch(url string, object interface{}) (string, map[string]interface{}, error) {
+	// marshal body
+	jsonBody, err := json.Marshal(object)
+	failOnError(err, "Cant marshal object")
+
+	// build url
+	url = connection.urlRoot + url
+	log.Println("PATCH:>", url)
+
+	// build request
+	var jsonString = []byte(jsonBody)
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonString))
+	return fireRequestAndUnmarshal(connection, req)
+}
+
 func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request) (string, map[string]interface{}, error) {
 	// set headers
 	request.Header.Set("Content-Type", "application/json")

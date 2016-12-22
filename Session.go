@@ -22,8 +22,9 @@ type Session interface {
 	// -> result as map
 	// -> error if applicable
 	GetCollectionByID(dbname string, id string) (string, map[string]interface{}, error)
-
 	CreateDocument(dbname string, collectionName string, object map[string]interface{}) (models.ArangoID, error)
+	UpdateDocument(dbname string, id string, object map[string]interface{}) error
+
 	// AqlQuery returns: result as array-map, result as json, error
 	AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error)
 }

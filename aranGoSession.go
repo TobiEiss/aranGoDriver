@@ -121,3 +121,9 @@ func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, 
 func (session *AranGoSession) GetCollectionByID(dbname string, id string) (string, map[string]interface{}, error) {
 	return session.arangoCon.Get("/_db/" + dbname + urlDocument + "/" + id)
 }
+
+// UpdateDocument updates an Object
+func (session *AranGoSession) UpdateDocument(dbname string, id string, object map[string]interface{}) error {
+	_, _, err := session.arangoCon.Patch("/_db/"+dbname+urlDocument+"/"+id, object)
+	return err
+}

@@ -114,6 +114,14 @@ func TestMain(t *testing.T) {
 		t.Error("id's arent the same")
 	}
 
+	// Update document
+	result["bar"] = "foo"
+	err = session.UpdateDocument(*testDbName, result["_id"].(string), result)
+	failOnError(err, "failed while update document")
+	// Verify
+	_, result, err = session.GetCollectionByID(*testDbName, result["_id"].(string))
+	assertTrue(result["bar"] == "foo")
+
 	// Drop collection
 	err = session.DropCollection(*testDbName, *testCollName)
 	failOnError(err, "Cant drop collection")

@@ -30,6 +30,19 @@ func NewTestSession() *TestSession {
 	return &TestSession{make(map[string]map[string][]map[string]interface{}), make(map[string]AqlFake)}
 }
 
+func findByParam(session *TestSession, dbname string, keyName string, valueV string) *map[string]interface{} {
+	for _, collection := range session.database[dbname] {
+		for _, entry := range collection {
+			for key, value := range entry {
+				if key == keyName && value == valueV {
+					return &entry
+				}
+			}
+		}
+	}
+	return nil
+}
+
 // Connect test
 func (session TestSession) Connect(username string, password string) error {
 	fmt.Println("Connect to DB")
@@ -118,15 +131,18 @@ func (session *TestSession) AddAqlFake(aql string, fake AqlFake) {
 }
 
 func (session *TestSession) GetCollectionByID(dbname string, id string) (string, map[string]interface{}, error) {
-	for _, collection := range session.database[dbname] {
-		for _, entry := range collection {
-			for key, value := range entry {
-				if key == "_id" && value == id {
-					jsonStr, err := json.Marshal(entry)
-					return string(jsonStr), entry, err
-				}
-			}
+	if entry := findByParam(session, dbname, "_id", id); entry != nil {
+		jsonStr, err := json.Marshal(entry)
+		return string(jsonStr), (*entry), err
+	}
+	return "", nil, errors.New("Cant find id")
+}
+
+func (session *TestSession) UpdateDocument(dbname string, id string, object map[string]interface{}) error {
+	if entry := findByParam(session, dbname, "_id", id); entry != nil {
+		for key, value := range object {
+			(*entry)[key] = value
 		}
 	}
-	return "", nil, nil
+	return nil
 }

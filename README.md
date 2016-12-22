@@ -5,7 +5,7 @@ This project is a golang-driver for [ArangoDB](https://www.arangodb.com/)
 Currently implemented:
 * connect to DB
 * databases: list, create, drop
-* collections: create, drop, truncate
+* collections: create, drop, truncate, update
 * documents: create, getById
 * AQL: simple cursor
 
@@ -75,6 +75,10 @@ arangoID, err := session.CreateDocument("myNewDatabase", "myNewCollection", test
 
 // get by id
 resultAsJsonString, resultAsMap, err := session.GetCollectionByID("myNewDatabase", idOfDocument)
+
+// update Document
+testDoc["bar"] = "foo"
+err = session.UpdateDocument("myNewDatabase", arangoID.ID, testDoc)
 ```
 
 ### aql
