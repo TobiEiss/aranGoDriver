@@ -94,6 +94,13 @@ func (session *AranGoSession) CreateDocument(dbname string, collectionName strin
 	return aranggoID, err
 }
 
+// CreateJsonDocument creates a document in a dollection in a database
+func (session *AranGoSession) CreateJsonDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error) {
+	jsonMap := make(map[string]interface{})
+	json.Unmarshal([]byte(jsonObj), &jsonMap)
+	return session.CreateDocument(dbname, collectionName, jsonMap)
+}
+
 // AqlQuery send a query
 func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error) {
 	requestBody := make(map[string]interface{})
