@@ -122,6 +122,18 @@ func TestMain(t *testing.T) {
 	_, result, err = session.GetCollectionByID(*testDbName, result["_id"].(string))
 	assertTrue(result["bar"] == "foo")
 
+	// check migrations
+	mig1 := aranGoDriver.Migration{
+		Name: "mig1",
+		Handle: func(embeddedSession aranGoDriver.Session) {
+			testMap := make(map[string]interface{})
+			testMap["foo"] = "foo"
+			embeddedSession.CreateDocument(*testDbName, *testCollName, testMap)
+		},
+	}
+	// excute migration
+	session.Migrate(mig1)
+
 	// Drop collection
 	err = session.DropCollection(*testDbName, *testCollName)
 	failOnError(err, "Cant drop collection")

@@ -19,6 +19,9 @@ const urlCollection = "/_api/collection"
 const urlDocument = "/_api/document"
 const urlCursor = "/_api/cursor"
 
+const systemDB = "_system"
+const migrationColl = "migrations"
+
 // NewAranGoDriverSession creates a new instance of a AranGoDriver-Session.
 // Need a host (e.g. "http://localhost:8529/")
 func NewAranGoDriverSession(host string) *AranGoSession {
@@ -133,4 +136,49 @@ func (session *AranGoSession) GetCollectionByID(dbname string, id string) (strin
 func (session *AranGoSession) UpdateDocument(dbname string, id string, object map[string]interface{}) error {
 	_, _, err := session.arangoCon.Patch("/_db/"+dbname+urlDocument+"/"+id, object)
 	return err
+}
+
+// UpdateJSONDocument update a json
+func (session *AranGoSession) UpdateJSONDocument(dbname string, id string, jsonObj string) error {
+	jsonMap := make(map[string]interface{})
+	json.Unmarshal([]byte(jsonObj), &jsonMap)
+	return session.UpdateDocument(dbname, id, jsonMap)
+}
+
+// Migrate migrates a migration
+func (session *AranGoSession) Migrate(migrations ...Migration) error {
+	session.CreateCollection(systemDB, migrationColl)
+
+	// helper function
+	findMigration := func(name string) (Migration, bool) {
+		query := "FOR migration IN " + migrationColl + " FILTER migration.name == '" + name + "' RETURN migration"
+		_, jsonMig, err := session.AqlQuery(systemDB, query, true, 1)
+		migration := Migration{}
+		json.Unmarshal([]byte(jsonMig), &migration)
+		return migration, jsonMig != "" && err == nil
+	}
+
+	migrationToJson := func(migration Migration) string {
+		b, _ := json.Marshal(migration)
+		return string(b)
+	}
+
+	// iterate all migrations
+	for _, mig := range migrations {
+		migration, successfully := findMigration(mig.Name)
+		if successfully {
+			if migration.Status != Finished {
+				mig.Handle(session)
+				mig.Status = Finished
+				session.UpdateJSONDocument(systemDB, mig.ArangoID.ID, migrationToJson(mig))
+			}
+		} else {
+			mig.Status = Started
+			arangoID, _ := session.CreateJsonDocument(systemDB, migrationColl, migrationToJson(mig))
+			mig.Handle(session)
+			mig.Status = Finished
+			session.UpdateJSONDocument(systemDB, arangoID.ID, migrationToJson(mig))
+		}
+	}
+	return nil
 }

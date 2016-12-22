@@ -12,6 +12,7 @@ import (
 
 	"encoding/json"
 
+	"github.com/TobiEiss/aranGoDriver/sliceTricks"
 	"github.com/fatih/structs"
 )
 
@@ -27,7 +28,9 @@ type AqlFake struct {
 
 func NewTestSession() *TestSession {
 	// database - collection - list of document (key, value)
-	return &TestSession{make(map[string]map[string][]map[string]interface{}), make(map[string]AqlFake)}
+	testSession := &TestSession{make(map[string]map[string][]map[string]interface{}), make(map[string]AqlFake)}
+	testSession.database[systemDB] = make(map[string][]map[string]interface{})
+	return testSession
 }
 
 func findByParam(session *TestSession, dbname string, keyName string, valueV string) *map[string]interface{} {
@@ -148,6 +151,43 @@ func (session *TestSession) UpdateDocument(dbname string, id string, object map[
 	if entry := findByParam(session, dbname, "_id", id); entry != nil {
 		for key, value := range object {
 			(*entry)[key] = value
+		}
+	}
+	return nil
+}
+
+func (session *TestSession) UpdateJSONDocument(dbname string, id string, jsonObj string) error {
+	jsonMap := make(map[string]interface{})
+	json.Unmarshal([]byte(jsonObj), &jsonMap)
+	return session.UpdateDocument(dbname, id, jsonMap)
+}
+
+func (tsession *TestSession) Migrate(migrations ...Migration) error {
+	if list, _ := tsession.ListDBs(); !sliceTricks.Contains(list, migrationColl) {
+		tsession.database[systemDB][migrationColl] = make([]map[string]interface{}, 20)
+	}
+
+	// helper function
+	findMigration := func(name string) map[string]interface{} {
+		if dbMigrations := tsession.database[systemDB][migrationColl]; len(systemDB) > 0 {
+			for _, mig := range dbMigrations {
+				if str, ok := mig["name"]; ok && str == name {
+					return mig
+				}
+			}
+		}
+		return nil
+	}
+
+	// transform to session
+	var session Session = tsession
+
+	// iterate all migrations
+	for _, mig := range migrations {
+		if findMigration(mig.Name) == nil {
+			mig.Handle(session)
+			mig.Status = Finished
+			tsession.database[systemDB][migrationColl] = append(tsession.database[systemDB][migrationColl], structs.Map(mig))
 		}
 	}
 	return nil

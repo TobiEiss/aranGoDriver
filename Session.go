@@ -25,7 +25,10 @@ type Session interface {
 	CreateDocument(dbname string, collectionName string, object map[string]interface{}) (models.ArangoID, error)
 	CreateJsonDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error)
 	UpdateDocument(dbname string, id string, object map[string]interface{}) error
+	UpdateJSONDocument(dbname string, id string, jsonObj string) error
 
 	// AqlQuery returns: result as array-map, result as json, error
 	AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error)
+
+	Migrate(migration ...Migration) error
 }
