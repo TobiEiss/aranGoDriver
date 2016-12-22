@@ -116,15 +116,18 @@ func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, 
 	resultInterface := response["result"]
 	resultSlice := reflect.ValueOf(resultInterface)
 
-	result := make([]map[string]interface{}, resultSlice.Len())
-	for i := 0; i < resultSlice.Len(); i++ {
-		result[i] = resultSlice.Index(i).Interface().(map[string]interface{})
+	if resultSlice.Len() > 0 {
+		result := make([]map[string]interface{}, resultSlice.Len())
+		for i := 0; i < resultSlice.Len(); i++ {
+			result[i] = resultSlice.Index(i).Interface().(map[string]interface{})
+		}
+
+		// only result as json
+		resultByte, err := json.Marshal(resultInterface)
+
+		return result, string(resultByte), err
 	}
-
-	// only result as json
-	resultByte, err := json.Marshal(resultInterface)
-
-	return result, string(resultByte), err
+	return nil, "", err
 }
 
 // GetCollectionByID search collection by id
