@@ -156,12 +156,12 @@ func (session *AranGoSession) Migrate(migrations ...Migration) error {
 	findMigration := func(name string) (Migration, bool) {
 		query := "FOR migration IN " + migrationColl + " FILTER migration.name == '" + name + "' RETURN migration"
 		_, jsonMig, err := session.AqlQuery(systemDB, query, true, 1)
-		migration := Migration{}
-		json.Unmarshal([]byte(jsonMig), &migration)
-		return migration, jsonMig != "" && err == nil
+		migrations := []Migration{}
+		err = json.Unmarshal([]byte(jsonMig), &migrations)
+		return migrations[0], jsonMig != "" && err == nil
 	}
 
-	migrationToJson := func(migration Migration) string {
+	migrationToJSON := func(migration Migration) string {
 		b, _ := json.Marshal(migration)
 		return string(b)
 	}
@@ -173,14 +173,14 @@ func (session *AranGoSession) Migrate(migrations ...Migration) error {
 			if migration.Status != Finished {
 				mig.Handle(session)
 				mig.Status = Finished
-				session.UpdateJSONDocument(systemDB, mig.ArangoID.ID, migrationToJson(mig))
+				session.UpdateJSONDocument(systemDB, mig.ArangoID.ID, migrationToJSON(mig))
 			}
 		} else {
 			mig.Status = Started
-			arangoID, _ := session.CreateJsonDocument(systemDB, migrationColl, migrationToJson(mig))
+			arangoID, _ := session.CreateJsonDocument(systemDB, migrationColl, migrationToJSON(mig))
 			mig.Handle(session)
 			mig.Status = Finished
-			session.UpdateJSONDocument(systemDB, arangoID.ID, migrationToJson(mig))
+			session.UpdateJSONDocument(systemDB, arangoID.ID, migrationToJSON(mig))
 		}
 	}
 	return nil
