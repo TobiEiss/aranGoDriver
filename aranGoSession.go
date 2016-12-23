@@ -158,6 +158,9 @@ func (session *AranGoSession) Migrate(migrations ...Migration) error {
 		_, jsonMig, err := session.AqlQuery(systemDB, query, true, 1)
 		migrations := []Migration{}
 		err = json.Unmarshal([]byte(jsonMig), &migrations)
+		if jsonMig == "" || err != nil {
+			return Migration{}, false
+		}
 		return migrations[0], jsonMig != "" && err == nil
 	}
 
