@@ -46,6 +46,17 @@ func findByParam(session *TestSession, dbname string, keyName string, valueV str
 	return nil
 }
 
+func objectToMap(object interface{}) map[string]interface{} {
+	var entryAsMap map[string]interface{}
+	switch item := object.(type) {
+	case map[string]interface{}:
+		entryAsMap = item
+	default:
+		entryAsMap = structs.Map(object)
+	}
+	return entryAsMap
+}
+
 // Connect test
 func (session TestSession) Connect(username string, password string) error {
 	fmt.Println("Connect to DB")
@@ -101,7 +112,7 @@ func (session *TestSession) TruncateCollection(dbname string, collectionName str
 	return nil
 }
 
-func (session *TestSession) CreateDocument(dbname string, collectionName string, object map[string]interface{}) (models.ArangoID, error) {
+func (session *TestSession) CreateDocument(dbname string, collectionName string, object interface{}) (models.ArangoID, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 	arangoID := models.ArangoID{
 		ID:  timestamp,
@@ -111,7 +122,7 @@ func (session *TestSession) CreateDocument(dbname string, collectionName string,
 
 	// create entry
 	entry := structs.Map(arangoID)
-	for key, value := range object {
+	for key, value := range objectToMap(object) {
 		entry[key] = value
 	}
 
@@ -147,9 +158,9 @@ func (session *TestSession) GetCollectionByID(dbname string, id string) (string,
 	return "", nil, errors.New("Cant find id")
 }
 
-func (session *TestSession) UpdateDocument(dbname string, id string, object map[string]interface{}) error {
+func (session *TestSession) UpdateDocument(dbname string, id string, object interface{}) error {
 	if entry := findByParam(session, dbname, "_id", id); entry != nil {
-		for key, value := range object {
+		for key, value := range objectToMap(object) {
 			(*entry)[key] = value
 		}
 	}

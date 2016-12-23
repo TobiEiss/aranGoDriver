@@ -90,7 +90,7 @@ func (session *AranGoSession) TruncateCollection(dbname string, collectionName s
 }
 
 // CreateDocument creates a document in a dollection in a database
-func (session *AranGoSession) CreateDocument(dbname string, collectionName string, object map[string]interface{}) (models.ArangoID, error) {
+func (session *AranGoSession) CreateDocument(dbname string, collectionName string, object interface{}) (models.ArangoID, error) {
 	bodyString, _, err := session.arangoCon.Post("/_db/"+dbname+urlDocument+"/"+collectionName, object)
 	aranggoID := models.ArangoID{}
 	err = json.Unmarshal([]byte(bodyString), &aranggoID)
@@ -136,7 +136,7 @@ func (session *AranGoSession) GetCollectionByID(dbname string, id string) (strin
 }
 
 // UpdateDocument updates an Object
-func (session *AranGoSession) UpdateDocument(dbname string, id string, object map[string]interface{}) error {
+func (session *AranGoSession) UpdateDocument(dbname string, id string, object interface{}) error {
 	_, _, err := session.arangoCon.Patch("/_db/"+dbname+urlDocument+"/"+id, object)
 	return err
 }
