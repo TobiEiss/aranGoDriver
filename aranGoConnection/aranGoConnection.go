@@ -42,14 +42,20 @@ func (connection *AranGoConnection) Post(url string, object interface{}) (string
 	// marshal body
 	jsonBody, err := json.Marshal(object)
 	failOnError(err, "Cant marshal object")
+	return connection.PostJSON(url, jsonBody)
+}
 
+// PostJSON creates a POST-Request with JSONbody
+func (connection *AranGoConnection) PostJSON(url string, jsonBody []byte) (string, map[string]interface{}, error) {
 	// build url
 	url = connection.urlRoot + url
 	log.Println("POST:>", url)
 
 	// build request
-	var jsonString = []byte(jsonBody)
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonString))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return "", nil, err
+	}
 	return fireRequestAndUnmarshal(connection, req)
 }
 
@@ -58,14 +64,20 @@ func (connection *AranGoConnection) Put(url string, object interface{}) (string,
 	// marshal body
 	jsonBody, err := json.Marshal(object)
 	failOnError(err, "Cant marshal object")
+	return connection.PutJSON(url, jsonBody)
+}
 
+// PutJSON creates a PUT-Request with a jsonString
+func (connection *AranGoConnection) PutJSON(url string, jsonBody []byte) (string, map[string]interface{}, error) {
 	// build url
 	url = connection.urlRoot + url
 	log.Println("PUT:>", url)
 
 	// build request
-	var jsonString = []byte(jsonBody)
-	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonString))
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return "", nil, err
+	}
 	return fireRequestAndUnmarshal(connection, req)
 }
 
@@ -87,14 +99,20 @@ func (connection *AranGoConnection) Patch(url string, object interface{}) (strin
 	// marshal body
 	jsonBody, err := json.Marshal(object)
 	failOnError(err, "Cant marshal object")
+	return connection.PatchJSON(url, jsonBody)
+}
 
+// PatchJSON creates a PATCH-request with JSONbody
+func (connection *AranGoConnection) PatchJSON(url string, jsonBody []byte) (string, map[string]interface{}, error) {
 	// build url
 	url = connection.urlRoot + url
 	log.Println("PATCH:>", url)
 
 	// build request
-	var jsonString = []byte(jsonBody)
-	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonString))
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return "", nil, err
+	}
 	return fireRequestAndUnmarshal(connection, req)
 }
 

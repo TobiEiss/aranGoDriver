@@ -99,9 +99,10 @@ func (session *AranGoSession) CreateDocument(dbname string, collectionName strin
 
 // CreateJsonDocument creates a document in a dollection in a database
 func (session *AranGoSession) CreateJsonDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error) {
-	jsonMap := make(map[string]interface{})
-	json.Unmarshal([]byte(jsonObj), &jsonMap)
-	return session.CreateDocument(dbname, collectionName, jsonMap)
+	bodyString, _, err := session.arangoCon.PostJSON("/_db/"+dbname+urlDocument+"/"+collectionName, []byte(jsonObj))
+	aranggoID := models.ArangoID{}
+	err = json.Unmarshal([]byte(bodyString), &aranggoID)
+	return aranggoID, err
 }
 
 // AqlQuery send a query
@@ -143,9 +144,8 @@ func (session *AranGoSession) UpdateDocument(dbname string, id string, object in
 
 // UpdateJSONDocument update a json
 func (session *AranGoSession) UpdateJSONDocument(dbname string, id string, jsonObj string) error {
-	jsonMap := make(map[string]interface{})
-	json.Unmarshal([]byte(jsonObj), &jsonMap)
-	return session.UpdateDocument(dbname, id, jsonMap)
+	_, _, err := session.arangoCon.PatchJSON("/_db/"+dbname+urlDocument+"/"+id, []byte(jsonObj))
+	return err
 }
 
 // Migrate migrates a migration
