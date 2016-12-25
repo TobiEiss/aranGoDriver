@@ -1,6 +1,7 @@
 # aranGoDriver [![Build Status](https://travis-ci.org/TobiEiss/aranGoDriver.svg?branch=master)](https://travis-ci.org/TobiEiss/aranGoDriver)
 
-This project is a golang-driver for [ArangoDB](https://www.arangodb.com/)
+This project is a golang-driver for [ArangoDB](https://www.arangodb.com/) writen in go.   
+There is also a embedded-in-memory-Database to run all your tests.
 
 Currently implemented:
 * connect to DB
@@ -10,6 +11,7 @@ Currently implemented:
 * AQL: simple cursor
 
 ## TOC
+- [Getting started](#getting-started)
 - [Test](#test)
     - [Test against a fake-in-memory-database:](#test-against-a-fake-in-memory-database)
     - [Test with a real database](#test-with-a-real-database)
@@ -19,6 +21,50 @@ Currently implemented:
     - [Collection](#collection)
     - [Document](#document)
     - [AQL](#aql)
+
+## Getting started
+All you need is a running Arango-DB and a go-environment.
+
+Install aranGoDriver:
+`go get github.com/TobiEiss/aranGoDriver`
+
+Write your first aranGoDriver-Programm:
+```golang
+func main() {
+    var session aranGoDriver.Session
+    
+    // Initialize a arango-Session with the address to your arangoDB.
+    //
+    // If you write a test use:
+    // session = aranGoDriver.NewTestSession()
+    //
+    session = aranGoDriver.NewAranGoDriverSession("http://localhost:8529")
+
+    // Connect to your arango-database:
+	session.Connect("usnername", "secretPassword")
+
+    // Concrats, you are connected!
+    // Let's print out all your databases
+    list, err := session.ListDBs()
+    if err != nil {
+        log.Fatal("there was a problem: ", err)
+    }
+    log.Println(list)
+
+    // Create a new database
+    err = session.CreateDB("myNewDatabase")
+    // TODO: handle err
+
+    // Create a new collection
+    err = session.CreateCollection("myNewDatabase", "myNewCollection")
+    // TODO: handle err
+
+    // Create Document
+	newDocument := make(map[string]interface{})
+	newDocument["foo"] = "bar"
+	arangoID, err = session.CreateDocument("myNewDatabase", "myNewCollection", newDocument)
+}
+```
 
 ## Test
 
