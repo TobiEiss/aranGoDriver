@@ -8,6 +8,7 @@ Currently implemented:
 * databases: list, create, drop
 * collections: create, drop, truncate, update
 * documents: create, getById
+* migrations
 * AQL: simple cursor
 
 ## TOC
@@ -20,6 +21,7 @@ Currently implemented:
     - [Database](#database)
     - [Collection](#collection)
     - [Document](#document)
+    - [Migrations](#migrations)
     - [AQL](#aql)
 
 ## Getting started
@@ -125,6 +127,27 @@ resultAsJsonString, resultAsMap, err := session.GetCollectionByID("myNewDatabase
 // update Document
 testDoc["bar"] = "foo"
 err = session.UpdateDocument("myNewDatabase", arangoID.ID, testDoc)
+```
+
+### Migrations
+In some cases you need 'migrations'. For example, you need default-user in your database in every environment.
+For this case, you can use migrations. The aranGoDriver write his own memo in a `migrations`-Collection in the standard `-system`-Database of arango, and execute the migration only one time.
+AranGoDriver will identificate the migration by name.
+Take a look to the following example:
+```golang
+// check migrations
+mig1 := aranGoDriver.Migration{
+    Name: "mig1", // name of migration to identificate
+    Handle: func(embeddedSession aranGoDriver.Session) {
+        testMap := make(map[string]interface{})
+        testMap["foo"] = "foo"
+        // you can do everything with the database
+        embeddedSession.CreateDocument("myDatabase", "myCollection", testMap)
+    },
+}
+// excute migration
+// Run This line before you 'main-loop' of your program
+session.Migrate(mig1)
 ```
 
 ### aql
