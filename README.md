@@ -5,24 +5,11 @@ There is also a embedded-in-memory-Database to run all your tests.
 
 Currently implemented:
 * connect to DB
-* databases: list, create, drop
-* collections: create, drop, truncate, update
-* documents: create, getById
-* migrations
-* AQL: simple cursor
-
-## TOC
-- [Getting started](#getting-started)
-- [Test](#test)
-    - [Test against a fake-in-memory-database:](#test-against-a-fake-in-memory-database)
-    - [Test with a real database](#test-with-a-real-database)
-- [Usage](#usage)
-    - [Connect to your ArangoDB](#connect-to-your-arangodb)
-    - [Database](#database)
-    - [Collection](#collection)
-    - [Document](#document)
-    - [Migrations](#migrations)
-    - [AQL](#aql)
+* [databases](#database): list, create, drop
+* [collections](#collection): create, drop, truncate, update
+* [documents](#document): create, getById
+* [migrations](#migrations)
+* [AQL](#aql): simple cursor
 
 ## Getting started
 All you need is a running Arango-DB and a go-environment.
