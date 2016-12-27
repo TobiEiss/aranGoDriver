@@ -4,8 +4,7 @@ This project is a golang-driver for [ArangoDB](https://www.arangodb.com/) writen
 There is also a embedded-in-memory-Database to run all your tests.
 
 Currently implemented:
-* connect to DB
-* [databases](#database): list, create, drop
+* [databases](#database): connect, list, create, drop
 * [collections](#collection): create, drop, truncate, update
 * [documents](#document): create, getById
 * [migrations](#migrations)
