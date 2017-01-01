@@ -132,7 +132,7 @@ func (session *TestSession) CreateDocument(dbname string, collectionName string,
 	return arangoID, nil
 }
 
-func (session *TestSession) CreateJsonDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error) {
+func (session *TestSession) CreateJSONDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error) {
 	jsonMap := make(map[string]interface{})
 	json.Unmarshal([]byte(jsonObj), &jsonMap)
 	return session.CreateDocument(dbname, collectionName, jsonMap)

@@ -89,7 +89,7 @@ func (session *AranGoSession) TruncateCollection(dbname string, collectionName s
 	return err
 }
 
-// CreateDocument creates a document in a dollection in a database
+// CreateDocument creates a document in a collection in a database
 func (session *AranGoSession) CreateDocument(dbname string, collectionName string, object interface{}) (models.ArangoID, error) {
 	bodyString, _, err := session.arangoCon.Post("/_db/"+dbname+urlDocument+"/"+collectionName, object)
 	aranggoID := models.ArangoID{}
@@ -97,8 +97,8 @@ func (session *AranGoSession) CreateDocument(dbname string, collectionName strin
 	return aranggoID, err
 }
 
-// CreateJsonDocument creates a document in a dollection in a database
-func (session *AranGoSession) CreateJsonDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error) {
+// CreateJSONDocument creates a document in a collection in a database
+func (session *AranGoSession) CreateJSONDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error) {
 	bodyString, _, err := session.arangoCon.PostJSON("/_db/"+dbname+urlDocument+"/"+collectionName, []byte(jsonObj))
 	aranggoID := models.ArangoID{}
 	err = json.Unmarshal([]byte(bodyString), &aranggoID)
@@ -180,7 +180,7 @@ func (session *AranGoSession) Migrate(migrations ...Migration) error {
 			}
 		} else {
 			mig.Status = Started
-			arangoID, _ := session.CreateJsonDocument(systemDB, migrationColl, migrationToJSON(mig))
+			arangoID, _ := session.CreateJSONDocument(systemDB, migrationColl, migrationToJSON(mig))
 			mig.Handle(session)
 			mig.Status = Finished
 			session.UpdateJSONDocument(systemDB, arangoID.ID, migrationToJSON(mig))
