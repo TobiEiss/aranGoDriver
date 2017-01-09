@@ -98,6 +98,10 @@ func (session *TestSession) CreateCollection(dbname string, collectionName strin
 	return nil
 }
 
+func (session *TestSession) CreateEdge(dbname string, edgeName string) error {
+	return errors.New("not implemented..")
+}
+
 func (session *TestSession) DropCollection(dbname string, collectionName string) error {
 	_, ok := session.database[dbname]
 	if !ok {

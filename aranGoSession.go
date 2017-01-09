@@ -77,6 +77,16 @@ func (session *AranGoSession) CreateCollection(dbname string, collectionName str
 	return err
 }
 
+// CreateEdge creates a edge to DB
+func (session *AranGoSession) CreateEdge(dbname string, edgeName string) error {
+	body := make(map[string]interface{})
+	body["name"] = edgeName
+	body["type"] = 3
+
+	_, _, err := session.arangoCon.Post("/_db/"+dbname+urlCollection, body)
+	return err
+}
+
 // DropCollection deletes a collection
 func (session *AranGoSession) DropCollection(dbname string, collectionName string) error {
 	_, _, err := session.arangoCon.Delete("/_db/" + dbname + urlCollection + "/" + collectionName)

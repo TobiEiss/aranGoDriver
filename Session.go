@@ -16,6 +16,8 @@ type Session interface {
 	DropCollection(dbname string, collectionName string) error
 	TruncateCollection(dbname string, collectionName string) error
 
+	CreateEdge(dbname string, edgeName string) error
+
 	// GetCollectionByID search collection by id
 	// returns:
 	// -> result as jsonString
