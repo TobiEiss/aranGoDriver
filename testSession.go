@@ -98,7 +98,7 @@ func (session *TestSession) CreateCollection(dbname string, collectionName strin
 	return nil
 }
 
-func (session *TestSession) CreateEdge(dbname string, edgeName string) error {
+func (session *TestSession) CreateEdgeCollection(dbname string, edgeName string) error {
 	return errors.New("not implemented..")
 }
 

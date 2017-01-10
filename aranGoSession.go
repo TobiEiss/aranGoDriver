@@ -77,8 +77,8 @@ func (session *AranGoSession) CreateCollection(dbname string, collectionName str
 	return err
 }
 
-// CreateEdge creates a edge to DB
-func (session *AranGoSession) CreateEdge(dbname string, edgeName string) error {
+// CreateEdgeCollection creates a edge to DB
+func (session *AranGoSession) CreateEdgeCollection(dbname string, edgeName string) error {
 	body := make(map[string]interface{})
 	body["name"] = edgeName
 	body["type"] = 3
