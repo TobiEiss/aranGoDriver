@@ -102,6 +102,10 @@ func (session *TestSession) CreateEdgeCollection(dbname string, edgeName string)
 	return errors.New("not implemented..")
 }
 
+func (session *TestSession) CreateEdgeDocument(dbname string, edgeName string, from string, to string) (models.ArangoID, error) {
+	return models.ArangoID{}, errors.New("not implemented...")
+}
+
 func (session *TestSession) DropCollection(dbname string, collectionName string) error {
 	_, ok := session.database[dbname]
 	if !ok {

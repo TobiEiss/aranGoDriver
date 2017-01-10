@@ -17,6 +17,7 @@ type Session interface {
 	TruncateCollection(dbname string, collectionName string) error
 
 	CreateEdgeCollection(dbname string, edgeName string) error
+	CreateEdgeDocument(dbname string, edgeName string, from string, to string) (models.ArangoID, error)
 
 	// GetCollectionByID search collection by id
 	// returns:

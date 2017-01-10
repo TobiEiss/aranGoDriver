@@ -87,6 +87,17 @@ func (session *AranGoSession) CreateEdgeCollection(dbname string, edgeName strin
 	return err
 }
 
+func (session *AranGoSession) CreateEdgeDocument(dbname string, edgeName string, from string, to string) (models.ArangoID, error) {
+	body := make(map[string]interface{})
+	body["_from"] = from
+	body["_to"] = to
+
+	bodyString, _, err := session.arangoCon.Post("/_db/"+dbname+urlDocument+"/"+edgeName, body)
+	aranggoID := models.ArangoID{}
+	err = json.Unmarshal([]byte(bodyString), &aranggoID)
+	return aranggoID, err
+}
+
 // DropCollection deletes a collection
 func (session *AranGoSession) DropCollection(dbname string, collectionName string) error {
 	_, _, err := session.arangoCon.Delete("/_db/" + dbname + urlCollection + "/" + collectionName)
