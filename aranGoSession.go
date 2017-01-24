@@ -138,7 +138,7 @@ func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, 
 	resultInterface := response["result"]
 	resultSlice := reflect.ValueOf(resultInterface)
 
-	if resultSlice.Len() > 0 {
+	if errorBool := response["error"].(bool); !errorBool && resultSlice.Len() > 0 {
 		result := make([]map[string]interface{}, resultSlice.Len())
 		for i := 0; i < resultSlice.Len(); i++ {
 			result[i] = resultSlice.Index(i).Interface().(map[string]interface{})
