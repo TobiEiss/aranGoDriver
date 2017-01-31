@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 // AranGoConnection represent to connection
@@ -134,7 +135,9 @@ func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request
 
 	// unmarshal to map
 	var responseMap map[string]interface{}
-	err = json.Unmarshal(body, &responseMap)
+	decoder := json.NewDecoder(strings.NewReader(string(body)))
+	decoder.UseNumber()
+	err = decoder.Decode(&responseMap)
 
 	return string(body), responseMap, err
 }
