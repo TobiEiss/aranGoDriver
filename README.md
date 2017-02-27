@@ -10,6 +10,8 @@ Currently implemented:
 * [migrations](#migrations)
 * [AQL](#aql): simple cursor
 
+If you miss something, please contact me!
+
 ## Getting started
 All you need is a running Arango-DB and a go-environment.
 
