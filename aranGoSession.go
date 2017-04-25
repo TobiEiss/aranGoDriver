@@ -98,6 +98,10 @@ func (session *AranGoSession) CreateEdgeDocument(dbname string, edgeName string,
 	return aranggoID, err
 }
 
+func (session *AranGoSession) ListCollections(dbname string) (string, map[string]interface{}, error) {
+	return session.arangoCon.Get("/_db/" + dbname + urlCollection)
+}
+
 // DropCollection deletes a collection
 func (session *AranGoSession) DropCollection(dbname string, collectionName string) error {
 	_, _, err := session.arangoCon.Delete("/_db/" + dbname + urlCollection + "/" + collectionName)

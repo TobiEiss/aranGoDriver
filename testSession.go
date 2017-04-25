@@ -73,6 +73,11 @@ func (session *TestSession) ListDBs() ([]string, error) {
 	return databases, nil
 }
 
+func (session *TestSession) ListCollections(dbname string) (string, map[string]interface{}, error) {
+	//TODO
+	return "", nil, nil
+}
+
 // CreateDB test create a db
 func (session *TestSession) CreateDB(dbname string) error {
 	_, ok := session.database[dbname]
