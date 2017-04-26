@@ -1,3 +1,4 @@
 .vscode/
 .info
 debug*
+framed/FramedConnection_test.go
