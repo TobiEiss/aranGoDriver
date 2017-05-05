@@ -34,3 +34,29 @@ func (database *Database) ListCollections() ([]Collection, error) {
 	}
 	return collections, nil
 }
+
+// CreateCollection creates a new collection.
+// After that search for the right collection via ListCollections().
+func (database *Database) CreateCollection(collectionname string) Collection {
+	var collection Collection
+
+	// create new collection
+	err := (*database.Session).CreateCollection(database.Name, collectionname)
+	if err != nil {
+		return collection
+	}
+
+	// get all collections
+	allCollections, err := database.ListCollections()
+	if err != nil {
+		return collection
+	}
+	// try to find the new collection
+	for _, c := range allCollections {
+		if c.Name == collectionname {
+			collection = c
+		}
+	}
+
+	return collection
+}
