@@ -103,6 +103,12 @@ err = DropCollection("myNewDatabase", "myNewCollection")
 err = TruncateCollection("myNewDatabase", "myNewCollection")
 ```
 
+EdgeCollection:
+```golang
+// create a collection in a database
+err = CreateEdgeCollection("myNewDatabase", "myNewEdgeCollection")
+```
+
 ### Document
 ```golang
 // create document
@@ -115,6 +121,11 @@ resultAsJsonString, resultAsMap, err := session.GetCollectionByID("myNewDatabase
 // update Document
 testDoc["bar"] = "foo"
 err = session.UpdateDocument("myNewDatabase", arangoID.ID, testDoc)
+```
+
+EdgeDocument
+```golang
+arangoID, err := session.CreateDocument("myNewDatabase", "myNewCollection", testDoc)
 ```
 
 ### Migrations
