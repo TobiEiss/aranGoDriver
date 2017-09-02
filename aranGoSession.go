@@ -35,7 +35,9 @@ func (session *AranGoSession) Connect(username string, password string) error {
 	credentials.Password = password
 
 	_, resp, err := session.arangoCon.Post(urlAuth, credentials)
-	session.arangoCon.SetJwtKey(resp["jwt"].(string))
+	if err == nil {
+		session.arangoCon.SetJwtKey(resp["jwt"].(string))
+	}
 	return err
 }
 
