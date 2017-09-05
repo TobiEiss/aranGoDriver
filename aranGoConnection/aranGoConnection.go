@@ -31,8 +31,8 @@ func (connection *AranGoConnection) Get(url string) (string, map[string]interfac
 	url = connection.urlRoot + url
 
 	// build request
-	req, err := http.NewRequest("GET", url, nil)
-	failOnError(err, "Failed while build GET-request")
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	failOnError(err, "Failed while building GET-request")
 
 	return fireRequestAndUnmarshal(connection, req)
 }
@@ -41,7 +41,7 @@ func (connection *AranGoConnection) Get(url string) (string, map[string]interfac
 func (connection *AranGoConnection) Post(url string, object interface{}) (string, map[string]interface{}, error) {
 	// marshal body
 	jsonBody, err := json.Marshal(object)
-	failOnError(err, "Cant marshal object")
+	failOnError(err, "Can't marshal object")
 	return connection.PostJSON(url, jsonBody)
 }
 
@@ -51,7 +51,7 @@ func (connection *AranGoConnection) PostJSON(url string, jsonBody []byte) (strin
 	url = connection.urlRoot + url
 
 	// build request
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return "", nil, err
 	}
@@ -62,7 +62,7 @@ func (connection *AranGoConnection) PostJSON(url string, jsonBody []byte) (strin
 func (connection *AranGoConnection) Put(url string, object interface{}) (string, map[string]interface{}, error) {
 	// marshal body
 	jsonBody, err := json.Marshal(object)
-	failOnError(err, "Cant marshal object")
+	failOnError(err, "Can't marshal object")
 	return connection.PutJSON(url, jsonBody)
 }
 
@@ -72,7 +72,7 @@ func (connection *AranGoConnection) PutJSON(url string, jsonBody []byte) (string
 	url = connection.urlRoot + url
 
 	// build request
-	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return "", nil, err
 	}
@@ -85,8 +85,8 @@ func (connection *AranGoConnection) Delete(url string) (string, map[string]inter
 	url = connection.urlRoot + url
 
 	// build request
-	req, err := http.NewRequest("DELETE", url, nil)
-	failOnError(err, "Failed while build DELETE-request")
+	req, err := http.NewRequest(http.MethodDelete, url, nil)
+	failOnError(err, "Failed while building DELETE-request")
 
 	return fireRequestAndUnmarshal(connection, req)
 }
@@ -95,7 +95,7 @@ func (connection *AranGoConnection) Delete(url string) (string, map[string]inter
 func (connection *AranGoConnection) Patch(url string, object interface{}) (string, map[string]interface{}, error) {
 	// marshal body
 	jsonBody, err := json.Marshal(object)
-	failOnError(err, "Cant marshal object")
+	failOnError(err, "Can't marshal object")
 	return connection.PatchJSON(url, jsonBody)
 }
 
@@ -105,7 +105,7 @@ func (connection *AranGoConnection) PatchJSON(url string, jsonBody []byte) (stri
 	url = connection.urlRoot + url
 
 	// build request
-	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest(http.MethodPatch, url, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return "", nil, err
 	}
