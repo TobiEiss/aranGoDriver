@@ -139,6 +139,9 @@ func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, 
 	requestBody["count"] = count
 	requestBody["batchSize"] = batchSize
 	_, response, err := session.arangoCon.Post("/_db/"+dbname+urlCursor, requestBody)
+	if err != nil {
+		return nil, "", err
+	}
 
 	// map response to array of map
 	resultInterface := response["result"]
