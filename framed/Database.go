@@ -18,8 +18,9 @@ func (database *Database) ListCollections() ([]Collection, error) {
 	collections := make([]Collection, 0)
 
 	// request collections
-	response, _, err := (*database.Session).ListCollections(database.Name)
-	jsonParsed, err := gabs.ParseJSON([]byte(response))
+	collectionsMap, err := (*database.Session).ListCollections(database.Name)
+	responseByte, _ := json.Marshal(collectionsMap)
+	jsonParsed, err := gabs.ParseJSON(responseByte)
 	if err != nil {
 		return collections, err
 	}

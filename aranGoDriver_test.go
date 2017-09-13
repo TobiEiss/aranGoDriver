@@ -107,7 +107,7 @@ func TestMain(t *testing.T) {
 	if !ok {
 		t.Error("Cant find a key in result")
 	}
-	_, result, err := session.GetCollectionByID(*testDbName, id)
+	result, err := session.GetCollectionByID(*testDbName, id)
 	id2, ok := result["_id"].(string)
 
 	if !ok || (id != id2) {
@@ -119,7 +119,7 @@ func TestMain(t *testing.T) {
 	err = session.UpdateDocument(*testDbName, result["_id"].(string), result)
 	failOnError(err, "failed while update document")
 	// Verify
-	_, result, err = session.GetCollectionByID(*testDbName, result["_id"].(string))
+	result, err = session.GetCollectionByID(*testDbName, result["_id"].(string))
 	assertTrue(result["bar"] == "foo")
 
 	// check migrations

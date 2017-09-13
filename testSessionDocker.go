@@ -17,7 +17,7 @@ defer closeFunc()
 
 err := session.Connect("root", "password")
 */
-func SetupDockerTest(arangoDbPassword string) (Session, func()) {
+func SetupDockerTest(arangoDbPassword string) (*Session, func()) {
 	var session Session
 	pool, err := dockertest.NewPool("")
 	if err != nil {
@@ -40,7 +40,7 @@ func SetupDockerTest(arangoDbPassword string) (Session, func()) {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
 
-	return session, func() {
+	return &session, func() {
 		if err := pool.Purge(resource); err != nil {
 			log.Fatalf("Could not purge resource: %s", err)
 		}

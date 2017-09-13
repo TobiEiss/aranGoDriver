@@ -2,6 +2,7 @@ package aranGoDriver
 
 import (
 	"encoding/json"
+	"net/http"
 	"reflect"
 
 	"github.com/TobiEiss/aranGoDriver/aranGoConnection"
@@ -43,17 +44,12 @@ func (session *AranGoSession) Connect(username string, password string) error {
 
 // ListDBs lists all db's
 func (session *AranGoSession) ListDBs() ([]string, error) {
-	_, resp, err := session.arangoCon.Get(urlDatabase)
-	result := resp["result"].([]interface{})
-
-	dblist := make([]string, len(result))
-	for _, value := range result {
-		if str, ok := value.(string); ok {
-			dblist = append(dblist, str)
-		}
+	var databaseWrapper struct {
+		Databases []string `json:"result,omitempty"`
 	}
+	err := session.arangoCon.Query(&databaseWrapper, http.MethodGet, urlDatabase)
 
-	return dblist, err
+	return databaseWrapper.Databases, err
 }
 
 // CreateDB creates a new db
@@ -100,8 +96,11 @@ func (session *AranGoSession) CreateEdgeDocument(dbname string, edgeName string,
 	return aranggoID, err
 }
 
-func (session *AranGoSession) ListCollections(dbname string) (string, map[string]interface{}, error) {
-	return session.arangoCon.Get("/_db/" + dbname + urlCollection)
+func (session *AranGoSession) ListCollections(dbname string) (map[string]interface{}, error) {
+	var collections map[string]interface{}
+	err := session.arangoCon.Query(&collections, http.MethodGet, "/_db/"+dbname+urlCollection)
+
+	return collections, err
 }
 
 // DropCollection deletes a collection
@@ -162,8 +161,11 @@ func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, 
 }
 
 // GetCollectionByID search collection by id
-func (session *AranGoSession) GetCollectionByID(dbname string, id string) (string, map[string]interface{}, error) {
-	return session.arangoCon.Get("/_db/" + dbname + urlDocument + "/" + id)
+func (session *AranGoSession) GetCollectionByID(dbname string, id string) (map[string]interface{}, error) {
+	var collection map[string]interface{}
+	err := session.arangoCon.Query(&collection, http.MethodGet, "/_db/"+dbname+urlDocument+"/"+id)
+
+	return collection, err
 }
 
 // UpdateDocument updates an Object

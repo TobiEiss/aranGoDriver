@@ -73,9 +73,9 @@ func (session *TestSession) ListDBs() ([]string, error) {
 	return databases, nil
 }
 
-func (session *TestSession) ListCollections(dbname string) (string, map[string]interface{}, error) {
+func (session *TestSession) ListCollections(dbname string) (map[string]interface{}, error) {
 	//TODO
-	return "", nil, nil
+	return nil, nil
 }
 
 // CreateDB test create a db
@@ -163,12 +163,12 @@ func (session *TestSession) AddAqlFake(aql string, fake AqlFake) {
 	session.aqlFakes[aql] = fake
 }
 
-func (session *TestSession) GetCollectionByID(dbname string, id string) (string, map[string]interface{}, error) {
+func (session *TestSession) GetCollectionByID(dbname string, id string) (map[string]interface{}, error) {
 	if entry := findByParam(session, dbname, "_id", id); entry != nil {
-		jsonStr, err := json.Marshal(entry)
-		return string(jsonStr), (*entry), err
+		_, err := json.Marshal(entry)
+		return (*entry), err
 	}
-	return "", nil, errors.New("Cant find id")
+	return nil, errors.New("Cant find id")
 }
 
 func (session *TestSession) UpdateDocument(dbname string, id string, object interface{}) error {

@@ -12,7 +12,7 @@ type Session interface {
 	CreateDB(dbname string) error
 	DropDB(dbname string) error
 
-	ListCollections(dbname string) (string, map[string]interface{}, error)
+	ListCollections(dbname string) (map[string]interface{}, error)
 	CreateCollection(dbname string, collectionName string) error
 	DropCollection(dbname string, collectionName string) error
 	TruncateCollection(dbname string, collectionName string) error
@@ -25,7 +25,7 @@ type Session interface {
 	// -> result as jsonString
 	// -> result as map
 	// -> error if applicable
-	GetCollectionByID(dbname string, id string) (string, map[string]interface{}, error)
+	GetCollectionByID(dbname string, id string) (map[string]interface{}, error)
 	CreateDocument(dbname string, collectionName string, object interface{}) (models.ArangoID, error)
 	CreateJSONDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error)
 	UpdateDocument(dbname string, id string, object interface{}) error
