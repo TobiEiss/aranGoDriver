@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -50,9 +51,18 @@ func (connection *AranGoConnection) HTTPDo(ctx context.Context, request *http.Re
 
 // Query queries the "route" with the http-"methode".
 // The typ ist the pointer for your result
-func (connection *AranGoConnection) Query(typ interface{}, methode string, route string) error {
+func (connection *AranGoConnection) Query(typ interface{}, methode string, route string, body interface{}) error {
+	var bodyReader io.Reader
+	if body != nil {
+		jsonBody, err := json.Marshal(body)
+		if err != nil {
+			return err
+		}
+		bodyReader = bytes.NewReader(jsonBody)
+	}
+
 	// build request
-	request, err := http.NewRequest(methode, connection.Host+route, nil)
+	request, err := http.NewRequest(methode, connection.Host+route, bodyReader)
 	if err != nil {
 		return err
 	}

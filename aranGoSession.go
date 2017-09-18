@@ -47,7 +47,7 @@ func (session *AranGoSession) ListDBs() ([]string, error) {
 	var databaseWrapper struct {
 		Databases []string `json:"result,omitempty"`
 	}
-	err := session.arangoCon.Query(&databaseWrapper, http.MethodGet, urlDatabase)
+	err := session.arangoCon.Query(&databaseWrapper, http.MethodGet, urlDatabase, nil)
 
 	return databaseWrapper.Databases, err
 }
@@ -98,7 +98,7 @@ func (session *AranGoSession) CreateEdgeDocument(dbname string, edgeName string,
 
 func (session *AranGoSession) ListCollections(dbname string) (map[string]interface{}, error) {
 	var collections map[string]interface{}
-	err := session.arangoCon.Query(&collections, http.MethodGet, "/_db/"+dbname+urlCollection)
+	err := session.arangoCon.Query(&collections, http.MethodGet, "/_db/"+dbname+urlCollection, nil)
 
 	return collections, err
 }
@@ -163,7 +163,7 @@ func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, 
 // GetCollectionByID search collection by id
 func (session *AranGoSession) GetCollectionByID(dbname string, id string) (map[string]interface{}, error) {
 	var collection map[string]interface{}
-	err := session.arangoCon.Query(&collection, http.MethodGet, "/_db/"+dbname+urlDocument+"/"+id)
+	err := session.arangoCon.Query(&collection, http.MethodGet, "/_db/"+dbname+urlDocument+"/"+id, nil)
 
 	return collection, err
 }
