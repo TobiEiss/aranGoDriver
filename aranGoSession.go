@@ -97,8 +97,8 @@ func (session *AranGoSession) CreateEdgeDocument(dbname string, edgeName string,
 	return aranggoID, err
 }
 
-func (session *AranGoSession) ListCollections(dbname string) (map[string]interface{}, error) {
-	var collections map[string]interface{}
+func (session *AranGoSession) ListCollections(dbname string) ([]string, error) {
+	var collections []string
 	err := session.arangoCon.Query(&collections, http.MethodGet, "/_db/"+dbname+urlCollection, nil)
 
 	return collections, err

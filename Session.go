@@ -12,7 +12,7 @@ type Session interface {
 	CreateDB(dbname string) error
 	DropDB(dbname string) error
 
-	ListCollections(dbname string) (map[string]interface{}, error)
+	ListCollections(dbname string) ([]string, error)
 	CreateCollection(dbname string, collectionName string) error
 	DropCollection(dbname string, collectionName string) error
 	TruncateCollection(dbname string, collectionName string) error

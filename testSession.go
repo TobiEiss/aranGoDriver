@@ -72,7 +72,7 @@ func (session *TestSession) ListDBs() ([]string, error) {
 	return databases, nil
 }
 
-func (session *TestSession) ListCollections(dbname string) (map[string]interface{}, error) {
+func (session *TestSession) ListCollections(dbname string) ([]string, error) {
 	//TODO
 	return nil, nil
 }
