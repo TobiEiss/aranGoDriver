@@ -111,7 +111,8 @@ func (session *AranGoSession) DropCollection(dbname string, collectionName strin
 
 // TruncateCollection truncate collections
 func (session *AranGoSession) TruncateCollection(dbname string, collectionName string) error {
-	_, _, err := session.arangoCon.Put("/_db/"+dbname+urlCollection+"/"+collectionName+"/truncate", "")
+	var response interface{}
+	err := session.arangoCon.Query(&response, http.MethodPut, "/_db/"+dbname+urlCollection+"/"+collectionName+"/truncate", nil)
 	return err
 }
 

@@ -92,27 +92,6 @@ func (connection *AranGoConnection) Query(typ interface{}, methode string, route
 	return err
 }
 
-// Put creates a PUT-Request
-func (connection *AranGoConnection) Put(url string, object interface{}) (string, map[string]interface{}, error) {
-	// marshal body
-	jsonBody, err := json.Marshal(object)
-	failOnError(err, "Can't marshal object")
-	return connection.PutJSON(url, jsonBody)
-}
-
-// PutJSON creates a PUT-Request with a jsonString
-func (connection *AranGoConnection) PutJSON(url string, jsonBody []byte) (string, map[string]interface{}, error) {
-	// build url
-	url = connection.Host + url
-
-	// build request
-	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(jsonBody))
-	if err != nil {
-		return "", nil, err
-	}
-	return fireRequestAndUnmarshal(connection, req)
-}
-
 // Delete creates a DELETE-request
 func (connection *AranGoConnection) Delete(url string) (string, map[string]interface{}, error) {
 	// build url
