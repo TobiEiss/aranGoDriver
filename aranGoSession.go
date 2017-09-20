@@ -160,13 +160,8 @@ func (session *AranGoSession) GetCollectionByID(dbname string, id string) (map[s
 
 // UpdateDocument updates an Object
 func (session *AranGoSession) UpdateDocument(dbname string, id string, object interface{}) error {
-	_, _, err := session.arangoCon.Patch("/_db/"+dbname+urlDocument+"/"+id, object)
-	return err
-}
-
-// UpdateJSONDocument update a json
-func (session *AranGoSession) UpdateJSONDocument(dbname string, id string, jsonObj string) error {
-	_, _, err := session.arangoCon.PatchJSON("/_db/"+dbname+urlDocument+"/"+id, []byte(jsonObj))
+	var result interface{}
+	err := session.arangoCon.Query(&result, http.MethodPatch, "/_db/"+dbname+urlDocument+"/"+id, nil)
 	return err
 }
 

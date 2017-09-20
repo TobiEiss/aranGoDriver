@@ -92,28 +92,6 @@ func (connection *AranGoConnection) Query(typ interface{}, methode string, route
 	return err
 }
 
-
-// Patch creates a PATCH-request
-func (connection *AranGoConnection) Patch(url string, object interface{}) (string, map[string]interface{}, error) {
-	// marshal body
-	jsonBody, err := json.Marshal(object)
-	failOnError(err, "Can't marshal object")
-	return connection.PatchJSON(url, jsonBody)
-}
-
-// PatchJSON creates a PATCH-request with JSONbody
-func (connection *AranGoConnection) PatchJSON(url string, jsonBody []byte) (string, map[string]interface{}, error) {
-	// build url
-	url = connection.Host + url
-
-	// build request
-	req, err := http.NewRequest(http.MethodPatch, url, bytes.NewBuffer(jsonBody))
-	if err != nil {
-		return "", nil, err
-	}
-	return fireRequestAndUnmarshal(connection, req)
-}
-
 func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request) (string, map[string]interface{}, error) {
 	// set headers
 	request.Header.Set("Content-Type", "application/json")

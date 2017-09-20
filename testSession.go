@@ -173,12 +173,6 @@ func (session *TestSession) UpdateDocument(dbname string, id string, object inte
 	return nil
 }
 
-func (session *TestSession) UpdateJSONDocument(dbname string, id string, jsonObj string) error {
-	jsonMap := make(map[string]interface{})
-	json.Unmarshal([]byte(jsonObj), &jsonMap)
-	return session.UpdateDocument(dbname, id, jsonMap)
-}
-
 func (tsession *TestSession) Migrate(migrations ...Migration) error {
 	if list, _ := tsession.ListDBs(); !sliceTricks.Contains(list, migrationColl) {
 		tsession.database[systemDB][migrationColl] = make([]map[string]interface{}, 20)
