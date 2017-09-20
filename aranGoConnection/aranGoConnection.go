@@ -92,27 +92,6 @@ func (connection *AranGoConnection) Query(typ interface{}, methode string, route
 	return err
 }
 
-// Post creates a POST-Request
-func (connection *AranGoConnection) Post(url string, object interface{}) (string, map[string]interface{}, error) {
-	// marshal body
-	jsonBody, err := json.Marshal(object)
-	failOnError(err, "Can't marshal object")
-	return connection.PostJSON(url, jsonBody)
-}
-
-// PostJSON creates a POST-Request with JSONbody
-func (connection *AranGoConnection) PostJSON(url string, jsonBody []byte) (string, map[string]interface{}, error) {
-	// build url
-	url = connection.Host + url
-
-	// build request
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonBody))
-	if err != nil {
-		return "", nil, err
-	}
-	return fireRequestAndUnmarshal(connection, req)
-}
-
 // Put creates a PUT-Request
 func (connection *AranGoConnection) Put(url string, object interface{}) (string, map[string]interface{}, error) {
 	// marshal body

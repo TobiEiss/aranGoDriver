@@ -6,8 +6,6 @@ import (
 
 	"flag"
 
-	"encoding/json"
-
 	"github.com/TobiEiss/aranGoDriver"
 	"github.com/TobiEiss/aranGoDriver/sliceTricks"
 )
@@ -35,15 +33,13 @@ func TestMain(t *testing.T) {
 		testSession := aranGoDriver.NewTestSession()
 
 		// fake
-		testDoc := make([]map[string]interface{}, 1)
+		testDoc := make([]interface{}, 1)
 		testMap := make(map[string]interface{})
 		testMap["foo"] = "bar"
 		testMap["_id"] = "userid"
 		testDoc[0] = testMap
-		jsonStr, _ := json.Marshal(testDoc)
 		fake1 := aranGoDriver.AqlFake{
-			JsonResult: string(jsonStr),
-			MapResult:  testDoc,
+			MapResult: testDoc,
 		}
 		testSession.AddAqlFake("FOR element in testColl FILTER element.foo == 'bar' RETURN element", fake1)
 		session = testSession
@@ -97,7 +93,8 @@ func TestMain(t *testing.T) {
 
 	// session.AqlQuery
 	query := "FOR element in testColl FILTER element.foo == 'bar' RETURN element"
-	results, _, err := session.AqlQuery(*testDbName, query, true, 1)
+	results := []map[string]interface{}{}
+	err = session.AqlQuery(&results, *testDbName, query, true, 1)
 	failOnError(err, "AQL-Query")
 	assertTrue(len(results) > 0)
 	t.Log(results)

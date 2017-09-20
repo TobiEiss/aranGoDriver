@@ -1,9 +1,8 @@
 package aranGoDriver
 
 import (
-	"encoding/json"
+	"errors"
 	"net/http"
-	"reflect"
 
 	"github.com/TobiEiss/aranGoDriver/aranGoConnection"
 	"github.com/TobiEiss/aranGoDriver/models"
@@ -35,9 +34,11 @@ func (session *AranGoSession) Connect(username string, password string) error {
 	credentials.Username = username
 	credentials.Password = password
 
-	_, resp, err := session.arangoCon.Post(urlAuth, credentials)
+	var resultMap map[string]string
+	err := session.arangoCon.Query(&resultMap, http.MethodPost, urlAuth, credentials)
+
 	if err == nil {
-		session.arangoCon.SetJwtKey(resp["jwt"].(string))
+		session.arangoCon.SetJwtKey(resultMap["jwt"])
 	}
 	return err
 }
@@ -56,8 +57,8 @@ func (session *AranGoSession) ListDBs() ([]string, error) {
 func (session *AranGoSession) CreateDB(dbname string) error {
 	body := make(map[string]string)
 	body["name"] = dbname
-
-	_, _, err := session.arangoCon.Post(urlDatabase, body)
+	var result interface{}
+	err := session.arangoCon.Query(&result, http.MethodPost, urlDatabase, body)
 	return err
 }
 
@@ -71,7 +72,8 @@ func (session *AranGoSession) DropDB(dbname string) error {
 func (session *AranGoSession) CreateCollection(dbname string, collectionName string) error {
 	body := make(map[string]string)
 	body["name"] = collectionName
-	_, _, err := session.arangoCon.Post("/_db/"+dbname+urlCollection, body)
+	var result interface{}
+	err := session.arangoCon.Query(&result, http.MethodPost, "/_db/"+dbname+urlCollection, body)
 	return err
 }
 
@@ -80,8 +82,8 @@ func (session *AranGoSession) CreateEdgeCollection(dbname string, edgeName strin
 	body := make(map[string]interface{})
 	body["name"] = edgeName
 	body["type"] = 3
-
-	_, _, err := session.arangoCon.Post("/_db/"+dbname+urlCollection, body)
+	var result interface{}
+	err := session.arangoCon.Query(&result, http.MethodPost, "/_db/"+dbname+urlCollection, body)
 	return err
 }
 
@@ -89,10 +91,8 @@ func (session *AranGoSession) CreateEdgeDocument(dbname string, edgeName string,
 	body := make(map[string]interface{})
 	body["_from"] = from
 	body["_to"] = to
-
-	bodyString, _, err := session.arangoCon.Post("/_db/"+dbname+urlDocument+"/"+edgeName, body)
-	aranggoID := models.ArangoID{}
-	err = json.Unmarshal([]byte(bodyString), &aranggoID)
+	var aranggoID models.ArangoID
+	err := session.arangoCon.Query(&aranggoID, http.MethodPost, "/_db/"+dbname+urlDocument+"/"+edgeName, body)
 	return aranggoID, err
 }
 
@@ -117,47 +117,34 @@ func (session *AranGoSession) TruncateCollection(dbname string, collectionName s
 
 // CreateDocument creates a document in a collection in a database
 func (session *AranGoSession) CreateDocument(dbname string, collectionName string, object interface{}) (models.ArangoID, error) {
-	bodyString, _, err := session.arangoCon.Post("/_db/"+dbname+urlDocument+"/"+collectionName, object)
-	aranggoID := models.ArangoID{}
-	err = json.Unmarshal([]byte(bodyString), &aranggoID)
-	return aranggoID, err
-}
-
-// CreateJSONDocument creates a document in a collection in a database
-func (session *AranGoSession) CreateJSONDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error) {
-	bodyString, _, err := session.arangoCon.PostJSON("/_db/"+dbname+urlDocument+"/"+collectionName, []byte(jsonObj))
-	aranggoID := models.ArangoID{}
-	err = json.Unmarshal([]byte(bodyString), &aranggoID)
+	var aranggoID models.ArangoID
+	err := session.arangoCon.Query(&aranggoID, http.MethodPost, "/_db/"+dbname+urlDocument+"/"+collectionName, object)
 	return aranggoID, err
 }
 
 // AqlQuery send a query
-func (session *AranGoSession) AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error) {
+func (session *AranGoSession) AqlQuery(typ interface{}, dbname string, query string, count bool, batchSize int) error {
+	// build request
 	requestBody := make(map[string]interface{})
 	requestBody["query"] = query
 	requestBody["count"] = count
 	requestBody["batchSize"] = batchSize
-	_, response, err := session.arangoCon.Post("/_db/"+dbname+urlCursor, requestBody)
+
+	var result struct {
+		Error  bool        `json:"error"`
+		Result interface{} `json:"result"`
+	}
+	result.Result = typ
+	err := session.arangoCon.Query(&result, http.MethodPost, "/_db/"+dbname+urlCursor, requestBody)
 	if err != nil {
-		return nil, "", err
+		return err
 	}
 
-	// map response to array of map
-	resultInterface := response["result"]
-	resultSlice := reflect.ValueOf(resultInterface)
-
-	if errorBool := response["error"].(bool); !errorBool && resultSlice.Len() > 0 {
-		result := make([]map[string]interface{}, resultSlice.Len())
-		for i := 0; i < resultSlice.Len(); i++ {
-			result[i] = resultSlice.Index(i).Interface().(map[string]interface{})
-		}
-
-		// only result as json
-		resultByte, err := json.Marshal(resultInterface)
-
-		return result, string(resultByte), err
+	if result.Error {
+		return errors.New("an error occured")
 	}
-	return nil, "", err
+
+	return err
 }
 
 // GetCollectionByID search collection by id
@@ -186,19 +173,10 @@ func (session *AranGoSession) Migrate(migrations ...Migration) error {
 
 	// helper function
 	findMigration := func(name string) (Migration, bool) {
-		query := "FOR migration IN " + migrationColl + " FILTER migration.name == '" + name + "' RETURN migration"
-		_, jsonMig, err := session.AqlQuery(systemDB, query, true, 1)
 		migrations := []Migration{}
-		err = json.Unmarshal([]byte(jsonMig), &migrations)
-		if jsonMig == "" || err != nil {
-			return Migration{}, false
-		}
-		return migrations[0], jsonMig != "" && err == nil
-	}
-
-	migrationToJSON := func(migration Migration) string {
-		b, _ := json.Marshal(migration)
-		return string(b)
+		query := "FOR migration IN " + migrationColl + " FILTER migration.name == '" + name + "' RETURN migration"
+		err := session.AqlQuery(&migrations, systemDB, query, true, 1)
+		return migrations[0], err == nil
 	}
 
 	// iterate all migrations
@@ -208,14 +186,14 @@ func (session *AranGoSession) Migrate(migrations ...Migration) error {
 			if migration.Status != Finished {
 				mig.Handle(session)
 				mig.Status = Finished
-				session.UpdateJSONDocument(systemDB, mig.ArangoID.ID, migrationToJSON(mig))
+				session.UpdateDocument(systemDB, mig.ArangoID.ID, mig)
 			}
 		} else {
 			mig.Status = Started
-			arangoID, _ := session.CreateJSONDocument(systemDB, migrationColl, migrationToJSON(mig))
+			arangoID, _ := session.CreateDocument(systemDB, migrationColl, mig)
 			mig.Handle(session)
 			mig.Status = Finished
-			session.UpdateJSONDocument(systemDB, arangoID.ID, migrationToJSON(mig))
+			session.UpdateDocument(systemDB, arangoID.ID, mig)
 		}
 	}
 	return nil

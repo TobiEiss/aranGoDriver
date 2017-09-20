@@ -27,12 +27,11 @@ type Session interface {
 	// -> error if applicable
 	GetCollectionByID(dbname string, id string) (map[string]interface{}, error)
 	CreateDocument(dbname string, collectionName string, object interface{}) (models.ArangoID, error)
-	CreateJSONDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error)
 	UpdateDocument(dbname string, id string, object interface{}) error
 	UpdateJSONDocument(dbname string, id string, jsonObj string) error
 
-	// AqlQuery returns: result as array-map, result as json, error
-	AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error)
+	// AqlQuery returns: result as array-map, error
+	AqlQuery(typ interface{}, dbname string, query string, count bool, batchSize int) error
 
 	Migrate(migration ...Migration) error
 }
