@@ -18,17 +18,16 @@ import (
 
 type TestSession struct {
 	database map[string]map[string][]map[string]interface{}
-	aqlFakes map[string]AqlFake
+	aqlFakes map[string][]byte
 }
 
 type AqlFake struct {
-	JsonResult string
-	MapResult  []map[string]interface{}
+	MapResult []interface{}
 }
 
 func NewTestSession() *TestSession {
 	// database - collection - list of document (key, value)
-	testSession := &TestSession{make(map[string]map[string][]map[string]interface{}), make(map[string]AqlFake)}
+	testSession := &TestSession{make(map[string]map[string][]map[string]interface{}), make(map[string][]byte)}
 	testSession.database[systemDB] = make(map[string][]map[string]interface{})
 	return testSession
 }
@@ -73,9 +72,9 @@ func (session *TestSession) ListDBs() ([]string, error) {
 	return databases, nil
 }
 
-func (session *TestSession) ListCollections(dbname string) (string, map[string]interface{}, error) {
+func (session *TestSession) ListCollections(dbname string) (map[string]interface{}, error) {
 	//TODO
-	return "", nil, nil
+	return nil, nil
 }
 
 // CreateDB test create a db
@@ -145,30 +144,24 @@ func (session *TestSession) CreateDocument(dbname string, collectionName string,
 	return arangoID, nil
 }
 
-func (session *TestSession) CreateJSONDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error) {
-	jsonMap := make(map[string]interface{})
-	json.Unmarshal([]byte(jsonObj), &jsonMap)
-	return session.CreateDocument(dbname, collectionName, jsonMap)
-}
-
-func (session *TestSession) AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error) {
-	if len(session.aqlFakes) > 0 {
-		aql := session.aqlFakes[query]
-		return aql.MapResult, aql.JsonResult, nil
+func (session *TestSession) AqlQuery(typ interface{}, dbname string, query string, count bool, batchSize int) error {
+	if session.aqlFakes[query] != nil {
+		return json.Unmarshal(session.aqlFakes[query], &typ)
 	}
-	return nil, "nil", errors.New("fakes are empty")
+	return errors.New("fakes are empty")
 }
 
 func (session *TestSession) AddAqlFake(aql string, fake AqlFake) {
-	session.aqlFakes[aql] = fake
+	bytes, _ := json.Marshal(fake.MapResult)
+	session.aqlFakes[aql] = bytes
 }
 
-func (session *TestSession) GetCollectionByID(dbname string, id string) (string, map[string]interface{}, error) {
+func (session *TestSession) GetCollectionByID(dbname string, id string) (map[string]interface{}, error) {
 	if entry := findByParam(session, dbname, "_id", id); entry != nil {
-		jsonStr, err := json.Marshal(entry)
-		return string(jsonStr), (*entry), err
+		_, err := json.Marshal(entry)
+		return (*entry), err
 	}
-	return "", nil, errors.New("Cant find id")
+	return nil, errors.New("Cant find id")
 }
 
 func (session *TestSession) UpdateDocument(dbname string, id string, object interface{}) error {
@@ -178,12 +171,6 @@ func (session *TestSession) UpdateDocument(dbname string, id string, object inte
 		}
 	}
 	return nil
-}
-
-func (session *TestSession) UpdateJSONDocument(dbname string, id string, jsonObj string) error {
-	jsonMap := make(map[string]interface{})
-	json.Unmarshal([]byte(jsonObj), &jsonMap)
-	return session.UpdateDocument(dbname, id, jsonMap)
 }
 
 func (tsession *TestSession) Migrate(migrations ...Migration) error {

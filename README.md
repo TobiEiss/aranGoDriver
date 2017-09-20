@@ -116,7 +116,7 @@ testDoc["foo"] = "bar"
 arangoID, err := session.CreateDocument("myNewDatabase", "myNewCollection", testDoc)
 
 // get by id
-resultAsJsonString, resultAsMap, err := session.GetCollectionByID("myNewDatabase", idOfDocument)
+resultAsMap, err := session.GetCollectionByID("myNewDatabase", idOfDocument)
 
 // update Document
 testDoc["bar"] = "foo"
