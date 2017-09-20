@@ -64,7 +64,8 @@ func (session *AranGoSession) CreateDB(dbname string) error {
 
 // DropDB drop a database
 func (session *AranGoSession) DropDB(dbname string) error {
-	_, _, err := session.arangoCon.Delete(urlDatabase + "/" + dbname)
+	var response interface{}
+	err := session.arangoCon.Query(&response, http.MethodDelete, urlDatabase+"/"+dbname, nil)
 	return err
 }
 
@@ -105,7 +106,8 @@ func (session *AranGoSession) ListCollections(dbname string) (map[string]interfa
 
 // DropCollection deletes a collection
 func (session *AranGoSession) DropCollection(dbname string, collectionName string) error {
-	_, _, err := session.arangoCon.Delete("/_db/" + dbname + urlCollection + "/" + collectionName)
+	var response interface{}
+	err := session.arangoCon.Query(&response, http.MethodDelete, "/_db/"+dbname+urlCollection+"/"+collectionName, nil)
 	return err
 }
 

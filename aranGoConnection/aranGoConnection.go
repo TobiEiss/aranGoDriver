@@ -92,17 +92,6 @@ func (connection *AranGoConnection) Query(typ interface{}, methode string, route
 	return err
 }
 
-// Delete creates a DELETE-request
-func (connection *AranGoConnection) Delete(url string) (string, map[string]interface{}, error) {
-	// build url
-	url = connection.Host + url
-
-	// build request
-	req, err := http.NewRequest(http.MethodDelete, url, nil)
-	failOnError(err, "Failed while building DELETE-request")
-
-	return fireRequestAndUnmarshal(connection, req)
-}
 
 // Patch creates a PATCH-request
 func (connection *AranGoConnection) Patch(url string, object interface{}) (string, map[string]interface{}, error) {
