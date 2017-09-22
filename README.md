@@ -51,9 +51,9 @@ func main() {
     // TODO: handle err
 
     // Create Document
-	newDocument := make(map[string]interface{})
-	newDocument["foo"] = "bar"
-	arangoID, err = session.CreateDocument("myNewDatabase", "myNewCollection", newDocument)
+    newDocument := make(map[string]interface{})
+    newDocument["foo"] = "bar"
+    arangoID, err = session.CreateDocument("myNewDatabase", "myNewCollection", newDocument)
 }
 ```
 
