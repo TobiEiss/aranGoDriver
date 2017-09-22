@@ -4,6 +4,7 @@ This project is a golang-driver for [ArangoDB](https://www.arangodb.com/) writen
 There is also an embedded-in-memory-Database to run all your tests.
 
 Currently implemented:
+* [version](#version)
 * [databases](#database): connect, list, create, drop
 * [collections](#collection): create, drop, truncate, update
 * [documents](#document): create, getById
@@ -76,6 +77,11 @@ You need a new Session to your database with the hostname as parameter. Then con
 ```
 session := aranGoDriver.NewAranGoDriverSession("http://localhost:8529")
 session.Connect("username", "password")
+```
+
+### Version
+```golang
+version, err := session.Version()
 ```
 
 ### Database

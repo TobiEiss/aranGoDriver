@@ -6,6 +6,7 @@ import (
 
 type Session interface {
 	Connect(username string, password string) error
+	Version() (Version, error)
 
 	// databases
 	ListDBs() ([]string, error)
@@ -32,4 +33,10 @@ type Session interface {
 	AqlQuery(typ interface{}, dbname string, query string, count bool, batchSize int) error
 
 	Migrate(migration ...Migration) error
+}
+
+// Version represent the version and license of the ArangoDB
+type Version struct {
+	Server  string `json:"server"`
+	License string `json:"license"`
 }

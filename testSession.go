@@ -62,6 +62,11 @@ func (session TestSession) Connect(username string, password string) error {
 	return nil
 }
 
+// Version returns hard-codeed the testDB as Version
+func (session *TestSession) Version() (Version, error) {
+	return Version{License: "testDB", Server: "testDB"}, nil
+}
+
 func (session *TestSession) ListDBs() ([]string, error) {
 	databases := []string{}
 

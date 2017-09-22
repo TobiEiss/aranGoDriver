@@ -18,6 +18,7 @@ const urlDatabase = "/_api/database"
 const urlCollection = "/_api/collection"
 const urlDocument = "/_api/document"
 const urlCursor = "/_api/cursor"
+const urlVersion = "/_api/version"
 
 const systemDB = "_system"
 const migrationColl = "migrations"
@@ -41,6 +42,13 @@ func (session *AranGoSession) Connect(username string, password string) error {
 		session.arangoCon.SetJwtKey(resultMap["jwt"])
 	}
 	return err
+}
+
+// Version returns current version
+func (session *AranGoSession) Version() (Version, error) {
+	var result Version
+	err := session.arangoCon.Query(&result, http.MethodGet, urlVersion, nil)
+	return result, err
 }
 
 // ListDBs lists all db's
