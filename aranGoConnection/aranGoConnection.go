@@ -5,10 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"io/ioutil"
-	"log"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -90,35 +87,4 @@ func (connection *AranGoConnection) Query(typ interface{}, methode string, route
 		return nil
 	})
 	return err
-}
-
-func fireRequestAndUnmarshal(connection *AranGoConnection, request *http.Request) (string, map[string]interface{}, error) {
-	// set headers
-	request.Header.Set("Content-Type", "application/json")
-	if &connection.jwtString != nil {
-		request.Header.Set("Authorization", "Bearer "+connection.jwtString)
-	}
-
-	client := &http.Client{}
-	resp, err := client.Do(request)
-	if err != nil {
-		return "", nil, err
-	}
-
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	// unmarshal to map
-	var responseMap map[string]interface{}
-	decoder := json.NewDecoder(strings.NewReader(string(body)))
-	decoder.UseNumber()
-	err = decoder.Decode(&responseMap)
-
-	return string(body), responseMap, err
-}
-
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
-	}
 }
