@@ -1,15 +1,15 @@
-package aranGoDriver_test
+package aranGoDriverDocker_test
 
 import (
 	"log"
 	"testing"
 
-	aranGoDriver "github.com/TobiEiss/aranGoDriver/docker"
+	"github.com/TobiEiss/aranGoDriver/aranGoDriverDocker"
 )
 
 func TestArangoDBDocker(t *testing.T) {
 	password := "password"
-	session, closeFunc := aranGoDriver.SetupDockerTest(password)
+	session, closeFunc := aranGoDriverDocker.SetupDockerTest(password)
 	defer closeFunc()
 
 	_, err := (*session).ListDBs()
@@ -21,7 +21,7 @@ func TestArangoDBDocker(t *testing.T) {
 
 func TestArangoDBDockerVersion(t *testing.T) {
 	password := "password"
-	session, closeFunc := aranGoDriver.SetupDockerTest(password)
+	session, closeFunc := aranGoDriverDocker.SetupDockerTest(password)
 	defer closeFunc()
 
 	// check Version
