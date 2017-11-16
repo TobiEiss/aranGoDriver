@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 
 	"github.com/TobiEiss/aranGoDriver"
+	"github.com/TobiEiss/aranGoDriver/models"
 	"github.com/TobiEiss/aranGoDriver/sliceTricks"
 )
 
@@ -121,6 +122,32 @@ func TestMain(t *testing.T) {
 	// Verify
 	_, result, err = session.GetCollectionByID(*testDbName, result["_id"].(string))
 	assertTrue(result["bar"] == "foo")
+
+	// Create graph
+	// Only implemented for real database
+	if *testDbHost != "" {
+		graph_test_collection := "gcol"
+		graph_test_edge_collection := "gcol"
+		session.CreateCollection(*testDbName, graph_test_collection)
+		session.CreateEdgeCollection(*testDbName, graph_test_edge_collection)
+
+		graphName := "testgraph"
+		edgeDefinition := models.EdgeDefinition{
+			Collection: graph_test_edge_collection,
+			From:       []string{graph_test_collection},
+			To:         []string{graph_test_collection}}
+		edgeDefinitions := []models.EdgeDefinition{edgeDefinition}
+
+		err = session.CreateGraph(*testDbName, graphName, edgeDefinitions)
+		failOnError(err, "failed creating a graph")
+
+		_, result, err = session.ListGraphs(*testDbName)
+		failOnError(err, "failed listing all graphs")
+		// assertTrue(result["graphs"][0]["_key"] == graphName)
+
+		err = session.DropGraph(*testDbName, graphName)
+		failOnError(err, "failed dropping a graph")
+	}
 
 	// check migrations
 	mig1 := aranGoDriver.Migration{

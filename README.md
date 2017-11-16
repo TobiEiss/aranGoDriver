@@ -117,6 +117,29 @@ testDoc["bar"] = "foo"
 err = session.UpdateDocument("myNewDatabase", arangoID.ID, testDoc)
 ```
 
+### Graphs
+To create a graph, you need to define the edges and nodes for the graph.
+This can be done with the `EdgeDefinition` model.
+```golang
+edgeDefinition := models.EdgeDefinition{
+    Collection: "myEdgeCollection",
+    From:       []string{"myCollection1"},
+    To:         []string{"myCollection2"}}
+edgeDefinitions := []models.EdgeDefinition{edgeDefinition}
+
+err := session.CreateGraph("myDatabase", "myGraph", edgeDefinitions)
+```
+
+If you want to get rid of an existing graph, you can use the `DropGraph` method.
+```golang
+err := session.DropGraph("myDatabase", "myGraph")
+```
+
+For an overview of your existing graphs, you can use `ListGraphs`.
+```golang
+str, b, err := session.ListGraphs("myDatabase")
+```
+
 ### Migrations
 In some cases you need 'migrations'. For example, you need default-user in your database in every environment.
 For this case, you can use migrations. The aranGoDriver write his own memo in a `migrations`-Collection in the standard `-system`-Database of arango, and execute the migration only one time.
