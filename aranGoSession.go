@@ -19,6 +19,7 @@ const urlCollection = "/_api/collection"
 const urlDocument = "/_api/document"
 const urlCursor = "/_api/cursor"
 const urlVersion = "/_api/version"
+const urlGraph = "/_api/gharial"
 
 const systemDB = "_system"
 const migrationColl = "migrations"
@@ -93,6 +94,24 @@ func (session *AranGoSession) CreateEdgeCollection(dbname string, edgeName strin
 	body["type"] = 3
 	var result interface{}
 	err := session.arangoCon.Query(&result, http.MethodPost, "/_db/"+dbname+urlCollection, body)
+	return err
+}
+
+func (session *AranGoSession) CreateGraph(dbname string, graphName string, edgeDefinitions []models.EdgeDefinition) error {
+	body := make(map[string]interface{})
+	body["name"] = graphName
+	body["edgeDefinitions"] = edgeDefinitions
+
+	_, _, err := session.arangoCon.Post("/_db/"+dbname+urlGraph, body)
+	return err
+}
+
+func (session *AranGoSession) ListGraphs(dbname string) (string, map[string]interface{}, error) {
+	return session.arangoCon.Get("/_db/" + dbname + urlGraph)
+}
+
+func (session *AranGoSession) DropGraph(dbname string, graphName string) error {
+	_, _, err := session.arangoCon.Delete("/_db/" + dbname + urlGraph + "/" + graphName)
 	return err
 }
 
