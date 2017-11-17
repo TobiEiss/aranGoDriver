@@ -4,6 +4,7 @@ This project is a golang-driver for [ArangoDB](https://www.arangodb.com/) writen
 There is also an embedded-in-memory-Database to run all your tests.
 
 Currently implemented:
+* [version](#version)
 * [databases](#database): connect, list, create, drop
 * [collections](#collection): create, drop, truncate, update
 * [documents](#document): create, getById
@@ -50,9 +51,9 @@ func main() {
     // TODO: handle err
 
     // Create Document
-	newDocument := make(map[string]interface{})
-	newDocument["foo"] = "bar"
-	arangoID, err = session.CreateDocument("myNewDatabase", "myNewCollection", newDocument)
+    newDocument := make(map[string]interface{})
+    newDocument["foo"] = "bar"
+    arangoID, err = session.CreateDocument("myNewDatabase", "myNewCollection", newDocument)
 }
 ```
 
@@ -76,6 +77,11 @@ You need a new Session to your database with the hostname as parameter. Then con
 ```
 session := aranGoDriver.NewAranGoDriverSession("http://localhost:8529")
 session.Connect("username", "password")
+```
+
+### Version
+```golang
+version, err := session.Version()
 ```
 
 ### Database
@@ -103,6 +109,12 @@ err = DropCollection("myNewDatabase", "myNewCollection")
 err = TruncateCollection("myNewDatabase", "myNewCollection")
 ```
 
+EdgeCollection:
+```golang
+// create a collection in a database
+err = CreateEdgeCollection("myNewDatabase", "myNewEdgeCollection")
+```
+
 ### Document
 ```golang
 // create document
@@ -110,7 +122,7 @@ testDoc["foo"] = "bar"
 arangoID, err := session.CreateDocument("myNewDatabase", "myNewCollection", testDoc)
 
 // get by id
-resultAsJsonString, resultAsMap, err := session.GetCollectionByID("myNewDatabase", idOfDocument)
+resultAsMap, err := session.GetCollectionByID("myNewDatabase", idOfDocument)
 
 // update Document
 testDoc["bar"] = "foo"

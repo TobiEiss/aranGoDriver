@@ -6,13 +6,14 @@ import (
 
 type Session interface {
 	Connect(username string, password string) error
+	Version() (Version, error)
 
 	// databases
 	ListDBs() ([]string, error)
 	CreateDB(dbname string) error
 	DropDB(dbname string) error
 
-	ListCollections(dbname string) (string, map[string]interface{}, error)
+	ListCollections(dbname string) ([]string, error)
 	CreateCollection(dbname string, collectionName string) error
 	DropCollection(dbname string, collectionName string) error
 	TruncateCollection(dbname string, collectionName string) error
@@ -26,17 +27,20 @@ type Session interface {
 
 	// GetCollectionByID search collection by id
 	// returns:
-	// -> result as jsonString
 	// -> result as map
 	// -> error if applicable
-	GetCollectionByID(dbname string, id string) (string, map[string]interface{}, error)
+	GetCollectionByID(dbname string, id string) (map[string]interface{}, error)
 	CreateDocument(dbname string, collectionName string, object interface{}) (models.ArangoID, error)
-	CreateJSONDocument(dbname string, collectionName string, jsonObj string) (models.ArangoID, error)
 	UpdateDocument(dbname string, id string, object interface{}) error
-	UpdateJSONDocument(dbname string, id string, jsonObj string) error
 
-	// AqlQuery returns: result as array-map, result as json, error
-	AqlQuery(dbname string, query string, count bool, batchSize int) ([]map[string]interface{}, string, error)
+	// AqlQuery returns: result as array-map, error
+	AqlQuery(typ interface{}, dbname string, query string, count bool, batchSize int) error
 
 	Migrate(migration ...Migration) error
+}
+
+// Version represent the version and license of the ArangoDB
+type Version struct {
+	Server  string `json:"server"`
+	License string `json:"license"`
 }
