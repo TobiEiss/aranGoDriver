@@ -102,16 +102,20 @@ func (session *AranGoSession) CreateGraph(dbname string, graphName string, edgeD
 	body["name"] = graphName
 	body["edgeDefinitions"] = edgeDefinitions
 
-	_, _, err := session.arangoCon.Post("/_db/"+dbname+urlGraph, body)
+	var response interface{}
+	err := session.arangoCon.Query(&response, http.MethodPost, "/_db/"+dbname+urlGraph, body)
 	return err
 }
 
-func (session *AranGoSession) ListGraphs(dbname string) (string, map[string]interface{}, error) {
-	return session.arangoCon.Get("/_db/" + dbname + urlGraph)
+func (session *AranGoSession) ListGraphs(dbname string) (interface{}, error) {
+	var result interface{}
+	err := session.arangoCon.Query(&result, http.MethodGet, "/_db/"+dbname+urlGraph, nil)
+	return result, err
 }
 
 func (session *AranGoSession) DropGraph(dbname string, graphName string) error {
-	_, _, err := session.arangoCon.Delete("/_db/" + dbname + urlGraph + "/" + graphName)
+	var response interface{}
+	err := session.arangoCon.Query(&response, http.MethodDelete, "/_db/"+dbname+urlGraph+"/"+graphName, nil)
 	return err
 }
 

@@ -119,8 +119,8 @@ func (session *TestSession) CreateGraph(dbname string, graphName string, edgeDef
 	return errors.New("not implemented..")
 }
 
-func (session *TestSession) ListGraphs(dbname string) (string, map[string]interface{}, error) {
-	return "", map[string]interface{}{}, errors.New("not implemented..")
+func (session *TestSession) ListGraphs(dbname string) (interface{}, error) {
+	return nil, errors.New("not implemented..")
 }
 
 func (session *TestSession) DropGraph(dbname string, graphName string) error {

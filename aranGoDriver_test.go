@@ -138,9 +138,8 @@ func TestMain(t *testing.T) {
 		err = session.CreateGraph(*testDbName, graphName, edgeDefinitions)
 		failOnError(err, "failed creating a graph")
 
-		_, result, err = session.ListGraphs(*testDbName)
+		_, err = session.ListGraphs(*testDbName)
 		failOnError(err, "failed listing all graphs")
-		// assertTrue(result["graphs"][0]["_key"] == graphName)
 
 		err = session.DropGraph(*testDbName, graphName)
 		failOnError(err, "failed dropping a graph")

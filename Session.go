@@ -22,7 +22,7 @@ type Session interface {
 	CreateEdgeDocument(dbname string, edgeName string, from string, to string) (models.ArangoID, error)
 
 	CreateGraph(dbname string, graphName string, edgeDefinitions []models.EdgeDefinition) error
-	ListGraphs(dbname string) (string, map[string]interface{}, error)
+	ListGraphs(dbname string) (interface{}, error)
 	DropGraph(dbname string, graphName string) error
 
 	// GetCollectionByID search collection by id
