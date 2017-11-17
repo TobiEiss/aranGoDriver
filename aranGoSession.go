@@ -19,6 +19,7 @@ const urlCollection = "/_api/collection"
 const urlDocument = "/_api/document"
 const urlCursor = "/_api/cursor"
 const urlGraph = "/_api/gharial"
+const urlVersion = "/_api/version"
 
 const systemDB = "_system"
 const migrationColl = "migrations"

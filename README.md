@@ -117,6 +117,11 @@ testDoc["bar"] = "foo"
 err = session.UpdateDocument("myNewDatabase", arangoID.ID, testDoc)
 ```
 
+EdgeDocument
+```golang
+arangoID, err := session.CreateDocument("myNewDatabase", "myNewCollection", testDoc)
+```
+
 ### Graphs
 To create a graph, you need to define the edges and nodes for the graph.
 This can be done with the `EdgeDefinition` model.
