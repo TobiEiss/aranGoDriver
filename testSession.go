@@ -115,6 +115,18 @@ func (session *TestSession) CreateEdgeDocument(dbname string, edgeName string, f
 	return models.ArangoID{}, errors.New("not implemented...")
 }
 
+func (session *TestSession) CreateGraph(dbname string, graphName string, edgeDefinitions []models.EdgeDefinition) error {
+	return errors.New("not implemented..")
+}
+
+func (session *TestSession) ListGraphs(dbname string) (interface{}, error) {
+	return nil, errors.New("not implemented..")
+}
+
+func (session *TestSession) DropGraph(dbname string, graphName string) error {
+	return errors.New("not implemented..")
+}
+
 func (session *TestSession) DropCollection(dbname string, collectionName string) error {
 	_, ok := session.database[dbname]
 	if !ok {
