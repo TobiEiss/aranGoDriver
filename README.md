@@ -8,6 +8,7 @@ Currently implemented:
 * [databases](#database): connect, list, create, drop
 * [collections](#collection): create, drop, truncate, update
 * [documents](#document): create, getById
+* [graphs](#graphs): create, drop, list
 * [migrations](#migrations)
 * [AQL](#aql): simple cursor
 
