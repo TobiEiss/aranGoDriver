@@ -5,6 +5,7 @@ There is also an embedded-in-memory-Database to run all your tests.
 
 Currently implemented:
 * [version](#version)
+* [users](#user): create, drop
 * [databases](#database): connect, list, create, drop
 * [collections](#collection): create, drop, truncate, update
 * [documents](#document): create, getById
@@ -83,6 +84,16 @@ session.Connect("username", "password")
 ### Version
 ```golang
 version, err := session.Version()
+```
+
+### User
+To use this methods you need a session as root user.
+```golang
+// create a new user
+err := session.CreateUser("username", "password")
+
+// delete an existing user
+err := session.DropUser("username")
 ```
 
 ### Database

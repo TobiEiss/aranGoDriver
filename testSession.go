@@ -67,6 +67,14 @@ func (session *TestSession) Version() (Version, error) {
 	return Version{License: "testDB", Server: "testDB"}, nil
 }
 
+func (session *TestSession) CreateUser(username string, password string) error {
+	return errors.New("not implemented..")
+}
+
+func (session *TestSession) DropUser(username string) error {
+	return errors.New("not implemented..")
+}
+
 func (session *TestSession) ListDBs() ([]string, error) {
 	databases := []string{}
 
