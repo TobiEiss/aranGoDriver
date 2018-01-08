@@ -8,6 +8,9 @@ type Session interface {
 	Connect(username string, password string) error
 	Version() (Version, error)
 
+	CreateUser(username string, password string) error
+	DropUser(username string) error
+
 	// databases
 	ListDBs() ([]string, error)
 	CreateDB(dbname string) error

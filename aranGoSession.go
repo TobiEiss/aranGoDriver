@@ -20,6 +20,7 @@ const urlDocument = "/_api/document"
 const urlCursor = "/_api/cursor"
 const urlVersion = "/_api/version"
 const urlGraph = "/_api/gharial"
+const urlUser = "/_api/user"
 
 const systemDB = "_system"
 const migrationColl = "migrations"
@@ -50,6 +51,28 @@ func (session *AranGoSession) Version() (Version, error) {
 	var result Version
 	err := session.arangoCon.Query(&result, http.MethodGet, urlVersion, nil)
 	return result, err
+}
+
+// Add a new database user
+func (session *AranGoSession) CreateUser(username string, password string) error {
+	body := make(map[string]interface{})
+	body["user"] = username
+	body["passwd"] = password
+
+	var response interface{}
+
+	err := session.arangoCon.Query(&response, http.MethodPost, urlUser, body)
+
+	return err
+}
+
+// Delete an existing user
+func (session *AranGoSession) DropUser(username string) error {
+	var response interface{}
+
+	err := session.arangoCon.Query(&response, http.MethodDelete, urlUser+"/"+username, nil)
+
+	return err
 }
 
 // ListDBs lists all db's
