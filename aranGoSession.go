@@ -75,6 +75,32 @@ func (session *AranGoSession) DropUser(username string) error {
 	return err
 }
 
+// Set the accesslevel for an user on a database
+// Possible values for level are: rw, ro and none
+func (session *AranGoSession) GrantDB(dbname string, username string, level string) error {
+	body := make(map[string]interface{})
+	body["grant"] = level
+
+	var response interface{}
+
+	err := session.arangoCon.Query(&response, http.MethodPut, urlUser+"/"+username+"/database/"+dbname, body)
+
+	return err
+}
+
+// Set the accesslevel for an user on a collection
+// Possible values for level are: rw, ro and none
+func (session *AranGoSession) GrantCollection(dbname string, collectionName string, username string, level string) error {
+	body := make(map[string]interface{})
+	body["grant"] = level
+
+	var response interface{}
+
+	err := session.arangoCon.Query(&response, http.MethodPut, urlUser+"/"+username+"/database/"+dbname+"/"+collectionName, body)
+
+	return err
+}
+
 // ListDBs lists all db's
 func (session *AranGoSession) ListDBs() ([]string, error) {
 	var databaseWrapper struct {

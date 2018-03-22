@@ -75,6 +75,14 @@ func (session *TestSession) DropUser(username string) error {
 	return errors.New("not implemented..")
 }
 
+func (session *TestSession) GrantDB(dbname string, username string, level string) error {
+	return errors.New("not implemented..")
+}
+
+func (session *TestSession) GrantCollection(dbname string, collectionName string, username string, level string) error {
+	return errors.New("not implemented..")
+}
+
 func (session *TestSession) ListDBs() ([]string, error) {
 	databases := []string{}
 
