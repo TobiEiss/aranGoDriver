@@ -94,6 +94,15 @@ err := session.CreateUser("username", "password")
 
 // delete an existing user
 err := session.DropUser("username")
+
+// grant permissions for a database
+err := session.GrantDB("database", "username", "rw")
+// Instead of "rw" you can also use "ro" or "none"
+
+// grant permissions for collections
+err := session.GrantCollection("database", "collection", "username", "rw") 
+// Instead of "rw" you can also use "ro" or "none"
+// and instead of a collection name, you can use "*" for all collections
 ```
 
 ### Database

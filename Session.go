@@ -8,8 +8,11 @@ type Session interface {
 	Connect(username string, password string) error
 	Version() (Version, error)
 
+	// users
 	CreateUser(username string, password string) error
 	DropUser(username string) error
+	GrantDB(dbname string, username string, level string) error
+	GrantCollection(dbname string, collectionName string, username string, level string) error
 
 	// databases
 	ListDBs() ([]string, error)
