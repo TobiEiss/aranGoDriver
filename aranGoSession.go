@@ -233,7 +233,7 @@ func (session *AranGoSession) AqlQuery(typ interface{}, dbname string, query str
 // GetCollectionByID search collection by id
 func (session *AranGoSession) GetCollectionByID(dbname string, id string) (map[string]interface{}, error) {
 	var collection map[string]interface{}
-	err := session.arangoCon.Query(&collection, http.MethodGet, "/_db/"+dbname+urlDocument+"/"+id, nil)
+	err := session.arangoCon.Query(&collection, http.MethodGet, "/_db/"+dbname+urlCollection+"/"+id, nil)
 
 	return collection, err
 }
