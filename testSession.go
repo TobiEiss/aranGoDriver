@@ -62,6 +62,10 @@ func (session TestSession) Connect(username string, password string) error {
 	return nil
 }
 
+func (session *TestSession) Query(typ interface{}, methode string, route string, body interface{}) error {
+	return errors.New("not implemented..")
+}
+
 // Version returns hard-codeed the testDB as Version
 func (session *TestSession) Version() (Version, error) {
 	return Version{License: "testDB", Server: "testDB"}, nil

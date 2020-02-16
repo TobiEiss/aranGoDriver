@@ -46,6 +46,10 @@ func (session *AranGoSession) Connect(username string, password string) error {
 	return err
 }
 
+func (session *AranGoSession) Query(typ interface{}, methode string, route string, body interface{}) error {
+	return session.arangoCon.Query(typ, methode, route, body)
+}
+
 // Version returns current version
 func (session *AranGoSession) Version() (Version, error) {
 	var result Version

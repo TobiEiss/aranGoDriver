@@ -42,6 +42,9 @@ type Session interface {
 	// AqlQuery returns: result as array-map, error
 	AqlQuery(typ interface{}, dbname string, query string, count bool, batchSize int) error
 
+	// Query with auth
+	Query(typ interface{}, methode string, route string, body interface{}) error
+
 	Migrate(migration ...Migration) error
 }
 
